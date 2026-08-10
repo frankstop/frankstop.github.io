@@ -2,9 +2,19 @@ import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "../support/browser-fixture.mjs";
 import { primaryRoutes } from "../support/catalog-fixture.mjs";
 
+async function stabilizeRenderedState(page) {
+  await page.locator(".scroll-reveal").evaluateAll((elements) => {
+    for (const element of elements) element.classList.add("visible");
+  });
+  await page.addStyleTag({
+    content: "*, *::before, *::after { animation: none !important; transition: none !important; }",
+  });
+}
+
 for (const route of primaryRoutes) {
   test(`primary route has no serious accessibility violations: ${route}`, async ({ page }) => {
     await page.goto(route, { waitUntil: "domcontentloaded" });
+    await stabilizeRenderedState(page);
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa"])
       .analyze();
@@ -15,6 +25,7 @@ for (const route of primaryRoutes) {
 }
 test("open dialogs have no serious accessibility violations", async ({ page }) => {
   await page.goto("/about.html", { waitUntil: "domcontentloaded" });
+  await stabilizeRenderedState(page);
   await page.getByRole("button", { name: "View Resume" }).click();
   let results = await new AxeBuilder({ page })
     .include("#resume-modal")
@@ -24,6 +35,7 @@ test("open dialogs have no serious accessibility violations", async ({ page }) =
     .toEqual([]);
 
   await page.goto("/projects.html", { waitUntil: "domcontentloaded" });
+  await stabilizeRenderedState(page);
   await page.locator(".preview-btn").first().click();
   results = await new AxeBuilder({ page })
     .include("#preview-modal")

@@ -15,7 +15,7 @@
     "build:site": "bundle exec jekyll build --strict_front_matter",
     "pretest": "npm run build",
     "test": "npm run test:contracts && npm run test:e2e",
-    "test:ci": "npm test",
+    "test:ci": "npm run test:contracts && npm run test:e2e",
     "test:contracts": "node --test tests/contracts/*.test.mjs",
     "test:e2e": "playwright test",
     "watch:css": "tailwindcss -c tailwind.config.js -i assets/css/tailwind.css -o assets/css/styles.css --watch"
