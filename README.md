@@ -1,4 +1,4 @@
-# Frank Valdez Portfolio
+# Frank Valdez
 
 A multi-page experimental portfolio built from custom browser graphics, shared Jekyll components, and independently deployed GitHub projects.
 
