@@ -51,7 +51,7 @@ body_class: "sp-body"
     z-index: 2;
     background: rgba(4, 9, 26, 0.72) !important;
     border-top: 1px solid var(--sp-line) !important;
-    color: var(--sp-ink-faint) !important;
+    color: #cbd5e1 !important;
     backdrop-filter: blur(10px);
   }
 
@@ -1086,7 +1086,11 @@ body_class: "sp-body"
           .then(function (data) { return { ok: response.ok, data: data }; });
       })
       .then(function (result) {
-        var delivered = result.ok && result.data.success !== false;
+        var delivered = result.ok && (
+          PROVIDER === "web3forms"
+            ? result.data.success === true
+            : result.data.ok !== false && !result.data.error
+        );
         if (!delivered) throw new Error(result.data.message || "Delivery failed");
 
         form.hidden = true;

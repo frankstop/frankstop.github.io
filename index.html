@@ -146,6 +146,7 @@ person_schema: true
 <script>
   const canvas = document.getElementById("vortexCanvas");
   const ctx = canvas.getContext("2d");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -154,7 +155,7 @@ person_schema: true
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
 
-  const numParticles = 12000;
+  const numParticles = reducedMotion ? 600 : 12000;
   const particles = [];
   const vortices = [
     { x: canvas.width * 0.3, y: canvas.height * 0.5, strength: 200 },
@@ -202,5 +203,11 @@ person_schema: true
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => { p.update(); p.draw(); });
   }
-  animate();
+  if (reducedMotion) {
+    ctx.fillStyle = "#000032";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((particle) => particle.draw());
+  } else {
+    animate();
+  }
 </script>

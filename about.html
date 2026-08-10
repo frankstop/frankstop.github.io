@@ -46,14 +46,24 @@ body_class: "bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-800 
   const resumeModal = document.getElementById('resume-modal');
   const resumeOpen = document.getElementById('resume-modal-open');
   const resumeClose = document.getElementById('resume-modal-close');
+  const resumeFrame = resumeModal.querySelector('iframe');
+
+  function setResumeBackgroundInert(inert) {
+    document.querySelectorAll('body > :not(#resume-modal)').forEach((element) => {
+      element.inert = inert;
+    });
+    document.body.classList.toggle('overflow-hidden', inert);
+  }
 
   function closeResumeModal() {
     resumeModal.classList.add('hidden');
     resumeModal.classList.remove('flex');
+    setResumeBackgroundInert(false);
     resumeOpen.focus();
   }
 
   resumeOpen.addEventListener('click', () => {
+    setResumeBackgroundInert(true);
     resumeModal.classList.remove('hidden');
     resumeModal.classList.add('flex');
     resumeClose.focus();
@@ -68,6 +78,23 @@ body_class: "bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-800 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && !resumeModal.classList.contains('hidden')) {
       closeResumeModal();
+      return;
+    }
+
+    if (event.key === 'Tab' && !resumeModal.classList.contains('hidden')) {
+      const first = resumeClose;
+      const last = resumeFrame;
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (!resumeModal.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      }
     }
   });
 </script>

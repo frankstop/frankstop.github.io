@@ -15,6 +15,7 @@
   // a run that already ended reports nothing further.
 
   const MEASUREMENT_ID = "G-RSVR6Y389R";
+  const VALID_OUTCOMES = new Set(["win", "lose", "complete", "quit"]);
 
   const ALLOWED_PARAMETERS = new Set([
     "duration_seconds",
@@ -100,7 +101,7 @@
   }
 
   function startRun(gameName, getScore) {
-    if (typeof gameName !== "string" || !gameName) {
+    if (typeof gameName !== "string" || !gameName || !runEnded) {
       return false;
     }
 
@@ -112,7 +113,7 @@
   }
 
   function finishRun(outcome, score, useBeacon) {
-    if (!runGameName || runEnded) {
+    if (!runGameName || runEnded || !VALID_OUTCOMES.has(outcome)) {
       return false;
     }
 

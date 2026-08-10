@@ -98,6 +98,13 @@ body_class: "bg-gray-50 text-gray-800"
   const previewCta = document.getElementById('preview-cta');
   const previewClose = document.getElementById('preview-close');
   const previewLoading = document.getElementById('preview-loading');
+  let previewTrigger = null;
+
+  function setPreviewBackgroundInert(inert) {
+    document.querySelectorAll('body > :not(#preview-modal)').forEach((element) => {
+      element.inert = inert;
+    });
+  }
 
   document.querySelectorAll('.preview-btn').forEach((button) => {
     button.addEventListener('click', () => {
@@ -112,6 +119,8 @@ body_class: "bg-gray-50 text-gray-800"
       previewCta.textContent = cta;
       previewCta.dataset.analyticsProjectName = title;
       previewLoading.classList.remove('hidden');
+      previewTrigger = button;
+      setPreviewBackgroundInert(true);
       previewModal.classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
       previewClose.focus();
@@ -123,8 +132,32 @@ body_class: "bg-gray-50 text-gray-800"
     previewModal.classList.add('hidden');
     previewFrame.src = '';
     document.body.classList.remove('overflow-hidden');
+    setPreviewBackgroundInert(false);
+    previewTrigger?.focus();
   }
   previewClose.addEventListener('click', closePreview);
   previewModal.addEventListener('click', (event) => { if (event.target === previewModal) closePreview(); });
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !previewModal.classList.contains('hidden')) closePreview(); });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !previewModal.classList.contains('hidden')) {
+      closePreview();
+      return;
+    }
+
+    if (event.key === 'Tab' && !previewModal.classList.contains('hidden')) {
+      const focusable = [previewCta, previewClose, previewFrame];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (!previewModal.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
 </script>

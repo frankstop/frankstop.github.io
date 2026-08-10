@@ -122,11 +122,19 @@ jekyll serve
 
 Then visit `http://localhost:4000`.
 
-Run the analytics checks with:
+Install the test browser once, then run the complete rendered-site and browser suite with:
 
 ```bash
-node --test _tests/*.test.mjs
+bundle install
+npm ci
+npx playwright install chromium
+npm test
 ```
+
+The suite builds Tailwind and Jekyll, validates catalog and rendered-site contracts,
+then exercises navigation, dialogs, routing, contact delivery, analytics,
+accessibility, and reduced-motion behavior in Chromium. Pull requests and pushes
+must pass this suite before the Pages deployment job can run.
 
 Changes pushed to `main` are built by the Pages workflow and published at
 [frankiejvaldez.com](https://frankiejvaldez.com/).

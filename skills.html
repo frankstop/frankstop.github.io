@@ -311,5 +311,11 @@ body_class: "skills-fireworks-page text-gray-800 min-h-screen flex flex-col"
 
   window.addEventListener("resize", resizeFireworks);
   resizeFireworks();
-  requestAnimationFrame(animateFireworks);
+  if (reducedMotion) {
+    ctx.fillStyle = "#040e21";
+    ctx.fillRect(0, 0, width, height);
+    drawStars();
+  } else {
+    requestAnimationFrame(animateFireworks);
+  }
 </script>
