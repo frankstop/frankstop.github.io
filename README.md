@@ -2,8 +2,6 @@
 
 A multi-page experimental portfolio built from custom browser graphics, shared Jekyll components, and independently deployed GitHub projects.
 
-The site treats the portfolio as a composition layer: other repositories can become live visual and interactive parts of the experience instead of appearing only as screenshots or outbound links.
-
 **[Explore the live website](https://frankiejvaldez.com/)**
 
 ## Interactive Experiences
