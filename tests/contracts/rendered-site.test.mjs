@@ -7,7 +7,8 @@ import {
   routeToFile,
   siteRoot,
   sitemapRoutes,
-  smokeRoutes
+  smokeRoutes,
+  repositoryCatalog
 } from "../support/catalog-fixture.mjs";
 
 async function filesUnder(directory) {
@@ -53,6 +54,11 @@ test("every internal document and asset reference resolves", async () => {
 
       const url = new URL(value, `https://frankiejvaldez.com${route}`);
       if (url.origin !== "https://frankiejvaldez.com") continue;
+      // Project Pages deployments share the custom domain but live in other repos.
+      if ($(element).is('[data-repository-website]')) {
+        assert.ok(repositoryCatalog.repositories.some(repo => repo.website_url === url.href), `${route} website destination is in the inspected catalog`);
+        continue;
+      }
 
       await assert.doesNotReject(
         access(localTarget(url.pathname)),

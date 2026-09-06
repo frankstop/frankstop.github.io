@@ -12,6 +12,10 @@ async function loadYaml(path) {
 
 export const projects = await loadYaml("_data/projects.yml");
 export const games = await loadYaml("_data/games.yml");
+export const repositoryCatalog = JSON.parse(await readFile(resolve(repositoryRoot, '_data/repositories.json'), 'utf8'));
+export const repositoryRoutes = ['/repositories/',
+  ...repositoryCatalog.categories.map(({slug}) => `/repositories/categories/${slug}/`),
+  ...repositoryCatalog.repositories.map(({slug}) => `/repositories/${slug}/`)];
 
 export const primaryRoutes = [
   "/",
@@ -22,7 +26,8 @@ export const primaryRoutes = [
   "/education.html",
   "/contact.html",
   "/gala-fresh.html",
-  "/games/"
+  "/games/",
+  "/repositories/"
 ];
 
 export const publishedProjectRoutes = projects
@@ -42,10 +47,11 @@ export const sitemapRoutes = [
   ...primaryRoutes,
   ...publishedGameRoutes,
   ...publishedProjectRoutes,
-  ...catalogHistoryRoutes
+  ...catalogHistoryRoutes,
+  ...repositoryRoutes
 ];
 
-export const smokeRoutes = [...sitemapRoutes, "/resume/"];
+export const smokeRoutes = [...new Set([...sitemapRoutes, "/resume/"])];
 
 export function routeToFile(route) {
   if (route === "/") return resolve(siteRoot, "index.html");

@@ -15,7 +15,7 @@ export const test = base.extend({
       window.dataLayer = [];
     });
 
-    await page.route(/^https?:\/\/(?!127\.0\.0\.1:4173)/, async (route) => {
+    await page.route(new RegExp(`^https?://(?!127\\.0\\.0\\.1:${process.env.SITE_TEST_PORT || 4173})`), async (route) => {
       await route.fulfill({ body: "", status: 204 });
     });
 

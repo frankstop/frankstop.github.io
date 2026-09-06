@@ -1,0 +1,38 @@
+{% assign repo = site.data.repositories.repositories | where: 'slug', page.repo_slug | first %}
+{% assign directory_title = repo.name %}
+{% assign directory_description = repo.description %}
+{% assign directory_path = '/repositories/' | append: repo.slug | append: '/' %}
+{% assign category = site.data.repositories.categories | where: 'name', repo.category | first %}
+<!DOCTYPE html>
+<html lang="en">
+<head>{% include repository-head.html %}</head>
+<body class="directory-body">
+<a class="directory-skip" href="#directory-main">Skip to repository</a>
+{% include header.html %}
+<main id="directory-main" class="directory-main repository-page">
+  <nav class="repository-breadcrumb" aria-label="Breadcrumb"><a href="{{ '/repositories/' | relative_url }}">Repository directory</a><span aria-hidden="true">/</span><a href="{{ '/repositories/categories/' | append: category.slug | append: '/' | relative_url }}">{{ repo.category | escape }}</a></nav>
+  <header class="directory-intro"><h1>{{ repo.name | escape }}</h1><p>{{ repo.description | escape }}</p></header>
+  <dl class="repository-facts"><div><dt>Source</dt><dd>{{ repo.visibility | capitalize }}</dd></div><div><dt>Website</dt><dd>{% if repo.website_status == 'live' %}Live{% elsif repo.website_status == 'unavailable' %}Unavailable{% else %}Not published{% endif %}</dd></div>{% if repo.language %}<div><dt>Primary language</dt><dd>{{ repo.language | escape }}</dd></div>{% endif %}<div><dt>Checked</dt><dd>{{ site.data.repositories.checked_at }}</dd></div></dl>
+  {% if repo.retired %}<aside class="repository-notice"><h2>Retired project</h2><p>The README marks this project as retired on September 6, 2026. Maintenance and automated updates have ended; published data is historical.</p></aside>{% endif %}
+  <section id="website" class="repository-destination">
+    <h2>Website</h2>
+    {% if repo.website_status == 'live' %}
+      <p>This website was reachable when checked. Open it to use the project or read its published documentation.</p>
+      <a class="repository-primary" href="{{ repo.website_url | escape }}" data-repository-website>Open website</a>
+      <p class="repository-address">{{ repo.website_url | escape }}</p>
+    {% elsif repo.website_status == 'unavailable' %}
+      <p>The configured website did not return a working page when checked{% if repo.http_status %} (HTTP {{ repo.http_status }}){% endif %}.</p>
+      <a href="{{ repo.website_url | escape }}" data-repository-website>Try configured website</a>
+      <p class="repository-address">{{ repo.website_url | escape }}</p>
+    {% else %}
+      <p>No published website was found in the repository’s Pages settings or homepage metadata. The repository link below is available{% if repo.visibility == 'private' %} to authorized collaborators{% endif %}.</p>
+    {% endif %}
+  </section>
+  <section class="repository-destination"><h2>Source repository</h2>
+    {% if repo.visibility == 'private' %}<p>The repository name is listed publicly with the owner’s permission. Its code and private documentation remain restricted on GitHub.{% if repo.website_status == 'live' %} The website above is already publicly accessible.{% endif %}</p>{% else %}<p>Browse the source, README, and project history on GitHub.</p>{% endif %}
+    <a href="{{ repo.source_url | escape }}">{% if repo.visibility == 'private' %}Open private repository{% else %}View source on GitHub{% endif %}</a>
+  </section>
+  <footer class="directory-footer"><a href="{{ '/repositories/categories/' | append: category.slug | append: '/' | relative_url }}">More in {{ repo.category | escape }}</a><a href="{{ '/repositories/' | relative_url }}">All repositories</a></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% assign catalog = site.data.repositories %}
+{% assign directory_title = 'Repository directory' %}
+{% assign directory_description = 'Browse the projects, experiments, and tools behind frankstop.' %}
+{% assign directory_path = '/repositories/' %}
+{% assign entries = catalog.repositories %}
+{% if page.category %}
+  {% assign directory_title = page.category | append: ' repositories' %}
+  {% assign directory_path = '/repositories/categories/' | append: page.category_slug | append: '/' %}
+  {% assign entries = entries | where: 'category', page.category %}
+{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>{% include repository-head.html %}</head>
+<body class="directory-body">
+<a class="directory-skip" href="#directory-main">Skip to repositories</a>
+{% include header.html %}
+<main id="directory-main" class="directory-main">
+  <header class="directory-intro">
+    <h1>{{ directory_title | escape }}</h1>
+    <p>{{ directory_description }}</p>
+    <p class="directory-totals">{{ catalog.total }} repositories · {{ catalog.public }} public · {{ catalog.private }} private</p>
+  </header>
+  <form class="directory-filters" role="search" aria-label="Filter repositories" data-directory-filters hidden>
+    <label>Search repositories
+      <input type="search" id="repo-search" placeholder="Search by name or description" autocomplete="off">
+    </label>
+    <label>Website
+      <select id="repo-website" aria-label="Website"><option value="all">All websites</option><option value="live">Live websites</option><option value="no_website">No website</option><option value="unavailable">Unavailable websites</option></select>
+    </label>
+    <label>Source
+      <select id="repo-source" aria-label="Source"><option value="all">All sources</option><option value="public">Public source</option><option value="private">Private source</option></select>
+    </label>
+  </form>
+  <div class="directory-layout">
+    <nav class="directory-categories" aria-label="Repository categories">
+      <a href="{{ '/repositories/' | relative_url }}" {% unless page.category %}aria-current="page"{% endunless %}>All repositories</a>
+      {% for category in catalog.categories %}
+      <a href="{{ '/repositories/categories/' | append: category.slug | append: '/' | relative_url }}" {% if page.category == category.name %}aria-current="page"{% endif %}>{{ category.name | escape }}</a>
+      {% endfor %}
+    </nav>
+    <section class="directory-results" aria-label="Repositories">
+      <div class="directory-list-header">
+        <p id="repo-count" role="status" aria-live="polite" aria-atomic="true">{{ entries.size }} repositories</p>
+        <div class="directory-result-controls" data-directory-controls hidden>
+          <button type="button" id="repo-clear" hidden>Clear filters</button>
+          <label for="repo-sort">Sort:</label><select id="repo-sort"><option value="az">Name A–Z</option><option value="za">Name Z–A</option><option value="websites">Websites first</option></select>
+        </div>
+      </div>
+      <div id="repository-list">
+        {% for repo in entries %}
+        <article class="repository-row" data-name="{{ repo.name | escape }}" data-search="{{ repo.name | append: ' ' | append: repo.description | append: ' ' | append: repo.category | append: ' ' | append: repo.language | downcase | escape }}" data-website="{{ repo.website_status }}" data-source="{{ repo.visibility }}">
+          <div class="repository-summary">
+            <h2><a href="{{ '/repositories/' | append: repo.slug | append: '/' | relative_url }}">{{ repo.name | escape }}</a></h2>
+            <p>{{ repo.description | escape }}</p>
+            <p class="repository-meta">{{ repo.category | escape }} <span aria-hidden="true">·</span> {{ repo.visibility | capitalize }} source{% if repo.retired %} <span aria-hidden="true">·</span> <strong>Retired</strong>{% endif %}</p>
+          </div>
+          <div class="repository-actions">
+            {% if repo.website_status == 'live' %}
+              <a class="repository-live" href="{{ repo.website_url | escape }}" data-repository-website aria-label="Open {{ repo.name | escape }} website">Open website</a>
+            {% elsif repo.website_status == 'unavailable' %}
+              <span class="repository-unavailable">Unavailable</span>
+            {% else %}<span class="repository-no-site">No website</span>{% endif %}
+            <a class="repository-details" href="{{ '/repositories/' | append: repo.slug | append: '/' | relative_url }}" aria-label="{{ repo.name | escape }} details">Details</a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      <div id="repo-empty" class="directory-empty" hidden><h2>No repositories match</h2><p>Try another name or clear the website and source filters.</p><button type="button" id="repo-empty-clear">Clear filters</button></div>
+    </section>
+  </div>
+  <footer class="directory-footer"><p>Website links checked {{ catalog.checked_at }}. Source visibility and website availability are separate.</p><p>Private-source links require GitHub permission. Retired projects are kept for reference.</p><a href="#directory-main">Back to top</a></footer>
+</main>
+<script src="{{ '/assets/js/repositories.js' | relative_url }}" defer></script>
+</body>
+</html>

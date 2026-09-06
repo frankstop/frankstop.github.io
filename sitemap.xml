@@ -41,4 +41,7 @@
   <url>
     <loc>https://frankiejvaldez.com/projects/kingkullenresearch/catalog-history/</loc>
   </url>
-</urlset>
+  <url><loc>https://frankiejvaldez.com/repositories/</loc></url>
+{% for category in site.data.repositories.categories %}  <url><loc>https://frankiejvaldez.com/repositories/categories/{{ category.slug }}/</loc></url>
+{% endfor %}{% for repo in site.data.repositories.repositories %}  <url><loc>https://frankiejvaldez.com/repositories/{{ repo.slug }}/</loc></url>
+{% endfor %}</urlset>

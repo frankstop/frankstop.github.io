@@ -61,6 +61,7 @@ const server = createServer((request, response) => {
   createReadStream(filePath).pipe(response);
 });
 
-server.listen(4173, "127.0.0.1", () => {
-  process.stdout.write("Rendered site available at http://127.0.0.1:4173\n");
+const port = Number(process.env.SITE_TEST_PORT || 4173);
+server.listen(port, "127.0.0.1", () => {
+  process.stdout.write(`Rendered site available at http://127.0.0.1:${port}\n`);
 });

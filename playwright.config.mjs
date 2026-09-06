@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+const port = Number(process.env.SITE_TEST_PORT || 4173);
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -8,7 +9,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: `http://127.0.0.1:${port}`,
     screenshot: "only-on-failure",
     trace: "retain-on-failure"
   },
@@ -20,7 +21,7 @@ export default defineConfig({
   ],
   webServer: {
     command: "node tests/support/serve-site.mjs",
-    port: 4173,
+    port,
     reuseExistingServer: !process.env.CI,
     timeout: 30_000
   }
