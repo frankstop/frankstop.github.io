@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="An interactive field manual for state estimation, Kalman filtering, object tracking, track fusion, and guidance, navigation, and control.">
+<meta name="theme-color" content="#ff5d42">
+<title>VectorLock — The State Estimation & GNC Field Manual</title>
+<style>
+:root{--ink:#13212b;--paper:#fffaf0;--white:#fff;--orange:#ff5d42;--yellow:#ffd43b;--cyan:#3ed8e8;--blue:#3157d5;--pink:#ff86b7;--lime:#a8df45;--muted:#63727b;--line:#d7ddd8;--shadow:0 14px 40px rgba(19,33,43,.11);--radius:22px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.62 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}::selection{background:var(--yellow);color:var(--ink)}
+a{color:inherit}.shell{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}.side{position:sticky;top:0;height:100vh;padding:28px 22px;border-right:1px solid var(--line);background:rgba(255,250,240,.96);backdrop-filter:blur(12px);overflow:auto;z-index:20}.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:-.04em;font-size:20px;text-decoration:none}.brandmark{width:34px;height:34px;border:3px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:var(--yellow);box-shadow:3px 3px 0 var(--ink)}.brandmark:after{content:"";width:9px;height:9px;border-radius:50%;background:var(--orange)}
+.kicker{margin:20px 0 8px;color:var(--orange);font:800 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.15em;text-transform:uppercase}.progressbar{height:9px;border:2px solid var(--ink);border-radius:99px;background:var(--white);overflow:hidden}.progressbar span{display:block;height:100%;width:0;background:var(--lime);transition:.3s}.progresscopy{font-size:12px;color:var(--muted);margin-top:7px}.nav{display:grid;gap:4px;margin-top:22px}.nav a{padding:8px 10px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:720;color:#53616a}.nav a:hover,.nav a.active{background:var(--ink);color:white}.side-note{margin-top:22px;padding:14px;border:2px solid var(--ink);border-radius:14px;background:var(--cyan);font-size:12px;box-shadow:4px 4px 0 var(--ink)}
+main{min-width:0}.hero{min-height:94vh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:46px;padding:64px clamp(26px,6vw,90px);position:relative;overflow:hidden;background:linear-gradient(135deg,#fffaf0 0%,#fff1d5 100%)}.hero:before{content:"";position:absolute;right:-110px;top:-120px;width:420px;height:420px;border-radius:50%;background:var(--pink);opacity:.25}.eyebrow{display:inline-flex;gap:9px;align-items:center;padding:7px 12px;border:2px solid var(--ink);border-radius:99px;background:var(--white);font:800 11px/1 ui-monospace,monospace;letter-spacing:.09em;text-transform:uppercase}.dot{width:8px;height:8px;border-radius:50%;background:var(--orange);animation:pulse 1.5s infinite}@keyframes pulse{50%{transform:scale(1.7);opacity:.5}}
+h1{font-size:clamp(47px,7vw,96px);line-height:.91;letter-spacing:-.075em;margin:25px 0 26px;max-width:850px}h1 em{font-style:normal;color:var(--orange)}.lede{font-size:clamp(18px,2vw,23px);max-width:660px;color:#3f505b;line-height:1.5}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}.btn{appearance:none;border:3px solid var(--ink);border-radius:12px;padding:12px 17px;background:var(--ink);color:white;text-decoration:none;font-weight:850;cursor:pointer;box-shadow:4px 4px 0 var(--orange);transition:.18s}.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--orange)}.btn.alt{background:white;color:var(--ink);box-shadow:4px 4px 0 var(--cyan)}
+.hero-viz{position:relative;min-height:520px;display:grid;place-items:center}.scope{width:min(480px,100%);aspect-ratio:1;border:3px solid var(--ink);border-radius:50%;background:var(--ink);box-shadow:16px 18px 0 var(--yellow);position:relative;overflow:hidden}.scope:before,.scope:after{content:"";position:absolute;inset:50% 0;border-top:1px solid rgba(62,216,232,.32)}.scope:after{inset:0 50%;border-top:0;border-left:1px solid rgba(62,216,232,.32)}.ring{position:absolute;border:1px solid rgba(62,216,232,.28);border-radius:50%;inset:18%}.ring.r2{inset:35%}.sweep{position:absolute;width:50%;height:50%;left:50%;top:0;transform-origin:0 100%;background:linear-gradient(45deg,rgba(62,216,232,.25),transparent 70%);animation:sweep 5s linear infinite}@keyframes sweep{to{transform:rotate(360deg)}}.blip{position:absolute;width:13px;height:13px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 8px rgba(255,93,66,.12),0 0 24px var(--orange)}.b1{left:68%;top:28%}.b2{left:29%;top:61%;background:var(--lime)}.trackline{position:absolute;height:2px;width:155px;background:linear-gradient(90deg,transparent,var(--yellow));left:38%;top:45%;transform:rotate(-29deg)}.floatcard{position:absolute;padding:13px 15px;border:2px solid var(--ink);border-radius:14px;background:white;box-shadow:5px 5px 0 var(--ink);font:700 12px/1.45 ui-monospace,monospace}.fc1{left:-15px;top:12%}.fc2{right:-18px;bottom:12%;background:var(--lime)}
+.strip{display:grid;grid-template-columns:repeat(5,1fr);border-block:3px solid var(--ink);background:var(--ink);gap:3px}.strip div{background:white;padding:22px 15px;text-align:center}.strip b{display:block;font-size:24px;letter-spacing:-.04em}.strip span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+.section{padding:92px clamp(26px,6vw,90px);border-bottom:1px solid var(--line);scroll-margin-top:10px}.section:nth-child(even){background:white}.section-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:start;max-width:980px;margin-bottom:44px}.chapter{font:900 13px/1 ui-monospace,monospace;color:var(--orange);letter-spacing:.12em}.section h2{font-size:clamp(36px,5vw,66px);line-height:1;letter-spacing:-.06em;margin:0 0 14px}.section-head p{font-size:18px;color:var(--muted);max-width:750px;margin:0}.grid2,.grid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:1180px}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{border:2px solid var(--ink);border-radius:var(--radius);padding:25px;background:white;box-shadow:6px 6px 0 var(--ink)}.card.yellow{background:var(--yellow)}.card.cyan{background:var(--cyan)}.card.pink{background:#ffd7e7}.card.lime{background:#e5f7bd}.card h3{font-size:21px;line-height:1.2;margin:0 0 10px;letter-spacing:-.025em}.card p:last-child{margin-bottom:0}.mini{font:800 11px/1 ui-monospace,monospace;color:var(--blue);text-transform:uppercase;letter-spacing:.1em}.equation{overflow-x:auto;padding:20px;margin:18px 0;background:var(--ink);border-radius:15px;color:white;font:600 16px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace}.equation .hi{color:var(--yellow)}.equation .cy{color:var(--cyan)}.equation .pk{color:var(--pink)}.plain{padding:18px;border-left:5px solid var(--orange);background:#fff3d7;border-radius:0 13px 13px 0}.plain strong{display:block;margin-bottom:5px}.concept-map{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:center;margin:35px 0;max-width:1180px}.node{padding:19px 12px;text-align:center;border:2px solid var(--ink);border-radius:15px;background:white;font-weight:850;position:relative}.node:not(:last-child):after{content:"→";position:absolute;right:-17px;top:50%;transform:translateY(-50%);z-index:2}.node:nth-child(1){background:var(--yellow)}.node:nth-child(2){background:var(--cyan)}.node:nth-child(3){background:var(--pink)}.node:nth-child(4){background:var(--lime)}.node:nth-child(5){background:var(--orange);color:white}
+table{width:100%;border-collapse:separate;border-spacing:0;margin:22px 0;border:2px solid var(--ink);border-radius:16px;overflow:hidden;background:white}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--ink);color:white;font-size:12px;letter-spacing:.08em;text-transform:uppercase}tr:last-child td{border-bottom:0}td:first-child{font-weight:800}.check{display:flex;align-items:flex-start;gap:10px;margin:10px 0}.check i{flex:0 0 22px;height:22px;border-radius:50%;background:var(--lime);border:2px solid var(--ink);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:900}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.tab{border:2px solid var(--ink);background:white;padding:9px 13px;border-radius:10px;font-weight:800;cursor:pointer}.tab.active{background:var(--ink);color:white}.tabpane{display:none}.tabpane.active{display:block}
+.lab{max-width:1180px;border:3px solid var(--ink);border-radius:28px;overflow:hidden;background:white;box-shadow:10px 10px 0 var(--cyan)}.labtop{display:grid;grid-template-columns:330px 1fr}.controls{padding:25px;background:#eefbfc;border-right:2px solid var(--ink)}.control{margin:18px 0}.control label{display:flex;justify-content:space-between;font-weight:800;font-size:13px}.control output{font-family:ui-monospace,monospace;color:var(--blue)}input[type=range]{width:100%;accent-color:var(--orange)}.canvaswrap{padding:20px;min-width:0}canvas{display:block;width:100%;height:360px;background:#13212b;border-radius:16px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border-top:2px solid var(--ink);background:var(--ink)}.stat{background:white;padding:18px;text-align:center}.stat b{display:block;font-size:24px}.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:800}.legend{display:flex;gap:16px;flex-wrap:wrap;margin:9px 0 0;font-size:12px;font-weight:750}.sw{display:inline-block;width:17px;height:4px;margin-right:5px;vertical-align:middle}.scenario{display:flex;gap:7px;flex-wrap:wrap}.scenario button{border:2px solid var(--ink);border-radius:9px;background:white;padding:7px 9px;font-weight:800;cursor:pointer}.scenario button:hover{background:var(--yellow)}
+.pipeline{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:26px 0}.pipe{border:2px solid var(--ink);border-radius:13px;padding:15px 9px;text-align:center;background:white;font-size:12px;font-weight:850;position:relative}.pipe:not(:last-child):after{content:"";position:absolute;width:8px;border-top:3px solid var(--ink);right:-10px;top:50%}.pipe small{display:block;color:var(--muted);font-weight:600;margin-top:5px}.failure{border-collapse:collapse}.failure td:nth-child(2){color:#a12b1a}.callout{max-width:1180px;margin:28px 0;padding:25px 28px;border:3px solid var(--ink);border-radius:20px;background:var(--yellow);box-shadow:7px 7px 0 var(--orange)}.callout h3{margin:0 0 8px}
+.quiz{max-width:900px}.q{padding:25px;margin:16px 0;border:2px solid var(--ink);border-radius:18px;background:white}.q h3{margin-top:0}.option{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin:8px 0;background:#fafafa;cursor:pointer}.option:hover{border-color:var(--blue)}.option.good{background:#dff6af;border-color:#507b00}.option.bad{background:#ffd8d1;border-color:#a12b1a}.explain{display:none;padding:11px;margin-top:10px;background:#eef2f4;border-radius:10px}.source-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.source{display:block;padding:17px;border:1px solid var(--line);border-radius:14px;background:white;text-decoration:none}.source:hover{border-color:var(--blue);transform:translateY(-2px)}.source b{display:block}.source span{font-size:13px;color:var(--muted)}.completion{display:flex;gap:10px;align-items:center;margin-top:25px}.done{border:2px solid var(--ink);background:white;border-radius:10px;padding:10px 14px;font-weight:850;cursor:pointer}.done.completed{background:var(--lime)}
+footer{padding:50px clamp(26px,6vw,90px);background:var(--ink);color:white;display:flex;justify-content:space-between;gap:20px;align-items:center}.top{color:var(--yellow);font-weight:800}
+@media(max-width:980px){.shell{display:block}.side{position:sticky;height:auto;padding:12px 18px;border-right:0;border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between}.side .kicker,.side .progressbar,.side .progresscopy,.side-note{display:none}.nav{display:flex;margin:0;overflow:auto;max-width:65vw}.nav a{white-space:nowrap}.hero{grid-template-columns:1fr;padding-top:70px}.hero-viz{min-height:430px}.grid3{grid-template-columns:1fr 1fr}.concept-map{grid-template-columns:1fr}.node:not(:last-child):after{content:"↓";right:auto;left:50%;top:auto;bottom:-20px}.pipeline{grid-template-columns:repeat(3,1fr)}.labtop{grid-template-columns:1fr}.controls{border-right:0;border-bottom:2px solid var(--ink)}}@media(max-width:650px){.brand{font-size:0}.brandmark{display:grid}.hero{padding:48px 20px}.hero-viz{min-height:340px}.scope{max-width:310px}.floatcard{font-size:10px}.section{padding:70px 20px}.section-head{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}.strip{grid-template-columns:1fr 1fr}.strip div:last-child{grid-column:1/-1}.stats{grid-template-columns:1fr 1fr}.pipeline{grid-template-columns:1fr 1fr}.source-list{grid-template-columns:1fr}footer{display:block}canvas{height:300px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+<a class="brand" href="#top"><span class="brandmark"></span>VECTORLOCK</a>
+<div>
+<div class="kicker">Field progress</div>
+<div class="progressbar"><span id="progress"></span></div>
+<div class="progresscopy"><span id="doneCount">0</span> of 8 chapters marked complete</div>
+</div>
+<nav class="nav">
+<a href="#orientation">00 Orientation</a><a href="#state">01 State</a><a href="#bayes">02 Bayesian estimation</a><a href="#kalman">03 Kalman filter</a><a href="#tracking">04 Object tracking</a><a href="#fusion">05 Track fusion</a><a href="#gnc">06 GNC</a><a href="#validation">07 Validation</a><a href="#lab">Live lab</a><a href="#assessment">Assessment</a>
+</nav>
+<div class="side-note"><b>Operating rule</b><br>Never trust a state estimate without its uncertainty, timestamp, frame, and consistency evidence.</div>
+</aside>
+<main>
+<header class="hero" id="top">
+<div>
+<span class="eyebrow"><span class="dot"></span> From zero to design-review fluent</span>
+<h1>Estimate what you <em>cannot see.</em></h1>
+<p class="lede">A rigorous, visual field manual for state estimation, Kalman filtering, multi-object tracking, track fusion, and Guidance, Navigation &amp; Control.</p>
+<div class="actions"><a class="btn" href="#orientation">Begin the field manual</a><a class="btn alt" href="#lab">Open the live filter lab</a></div>
+</div>
+<div class="hero-viz" aria-label="Animated tracking scope">
+<div class="scope"><div class="ring"></div><div class="ring r2"></div><div class="sweep"></div><div class="blip b1"></div><div class="blip b2"></div><div class="trackline"></div></div>
+<div class="floatcard fc1">x̂ = [p, v, a]ᵀ<br>P = uncertainty</div><div class="floatcard fc2">NIS 2.31 ✓<br>track confirmed</div>
+</div>
+</header>
+<div class="strip"><div><b>8</b><span>core chapters</span></div><div><b>1</b><span>live simulator</span></div><div><b>20+</b><span>engineering tests</span></div><div><b>6</b><span>knowledge checks</span></div><div><b>0</b><span>prerequisites</span></div></div>
+
+<section class="section" id="orientation">
+<div class="section-head"><div class="chapter">CH 00</div><div><h2>The whole system in one picture</h2><p>Estimation turns imperfect evidence into a belief about the world. Tracking manages those beliefs over time. Fusion combines information. GNC uses the resulting state to decide and act.</p></div></div>
+<div class="concept-map"><div class="node">Sensors</div><div class="node">Measurements</div><div class="node">State estimates</div><div class="node">Guidance plan</div><div class="node">Control action</div></div>
+<div class="grid3">
+<div class="card yellow"><span class="mini">Navigation</span><h3>Where am I, how am I moving, and how uncertain is that answer?</h3><p>Navigation estimates the vehicle state from inertial sensors, GPS/GNSS, cameras, star trackers, radar, altimeters, or other measurements.</p></div>
+<div class="card cyan"><span class="mini">Guidance</span><h3>Where should I go next?</h3><p>Guidance converts mission objectives and constraints into a reference trajectory, waypoint, attitude, velocity, or intercept command.</p></div>
+<div class="card pink"><span class="mini">Control</span><h3>What actuator command makes reality follow the reference?</h3><p>Control closes the loop using thrust, steering, torque, control surfaces, reaction wheels, brakes, or motors.</p></div>
+</div>
+<div class="callout"><h3>The expert separation</h3><p>A tracker estimating another object is not automatically “navigation.” Navigation estimates the host vehicle’s state. Both use similar estimation machinery, but their frames, dynamics, sensors, safety cases, and failure consequences differ.</p></div>
+<button class="done" data-ch="orientation">Mark chapter complete</button>
+</section>
+
+<section class="section" id="state">
+<div class="section-head"><div class="chapter">CH 01</div><div><h2>A state is a compact prediction machine</h2><p>The state contains the minimum variables needed to predict future behavior under your model. It is not every fact you know about an object.</p></div></div>
+<div class="grid2">
+<div class="card"><span class="mini">Example: 1D motion</span><h3>Position + velocity</h3><div class="equation"><span class="hi">x</span> = [ position, velocity ]ᵀ<br>xₖ₊₁ = <span class="cy">F</span>xₖ + Buₖ + wₖ<br>zₖ = <span class="pk">H</span>xₖ + vₖ</div><p><b>F</b> propagates dynamics. <b>B</b> maps known inputs. <b>H</b> maps state into sensor space. <b>w</b> and <b>v</b> represent process and measurement uncertainty.</p></div>
+<div class="card lime"><span class="mini">Units matter</span><h3>Covariance is geometry, not a confidence vibe</h3><p>The covariance matrix <b>P</b> contains variances on the diagonal and cross-covariances off diagonal. Its ellipsoid shows directions of high and low uncertainty.</p><div class="equation">P = E[(x − x̂)(x − x̂)ᵀ]<br>P₁₁ → m² &nbsp; P₂₂ → (m/s)²</div></div>
+</div>
+<table><thead><tr><th>Term</th><th>Engineering meaning</th><th>Typical mistake</th></tr></thead><tbody>
+<tr><td>State x</td><td>The latent variables the model propagates</td><td>Adding unobservable states because they sound useful</td></tr>
+<tr><td>Measurement z</td><td>What the sensor actually reports</td><td>Treating a derived detection as raw truth</td></tr>
+<tr><td>Process noise Q</td><td>Unmodeled dynamics accumulated per prediction</td><td>Calling it “sensor noise” or tuning it without units</td></tr>
+<tr><td>Measurement noise R</td><td>Uncertainty of observations in measurement space</td><td>Using a constant value across range and geometry</td></tr>
+<tr><td>Frame</td><td>Coordinates and reference in which values are expressed</td><td>Fusing ENU, NED, body, sensor, or map states as if identical</td></tr>
+</tbody></table>
+<div class="plain"><strong>Observability question</strong>If two different internal states can produce exactly the same measurement history, the sensor/model combination cannot distinguish them. No filter tuning fixes an unobservable system.</div>
+<div class="completion"><button class="done" data-ch="state">Mark chapter complete</button></div>
+</section>
+
+<section class="section" id="bayes">
+<div class="section-head"><div class="chapter">CH 02</div><div><h2>Filtering is recursive Bayesian inference</h2><p>Start with a belief, predict it through dynamics, compare the predicted observation with the real observation, then update the belief.</p></div></div>
+<div class="grid2">
+<div class="card yellow"><span class="mini">Predict</span><h3>Prior: what the model expected</h3><div class="equation">p(xₖ | z₁:ₖ₋₁) = ∫ p(xₖ | xₖ₋₁)<br>· p(xₖ₋₁ | z₁:ₖ₋₁) dxₖ₋₁</div><p>Prediction moves both the mean and uncertainty forward. Uncertainty generally grows because the future contains disturbances you did not model exactly.</p></div>
+<div class="card cyan"><span class="mini">Correct</span><h3>Posterior: what you believe after seeing data</h3><div class="equation">p(xₖ | z₁:ₖ) ∝ p(zₖ | xₖ)<br>· p(xₖ | z₁:ₖ₋₁)</div><p>The likelihood scores which states could have produced the observation. The posterior becomes the prior for the next cycle.</p></div>
+</div>
+<h3>Three estimates experts keep distinct</h3>
+<div class="grid3">
+<div class="card"><h3>Filtering</h3><p>Estimate the current state using data through now: <b>xₖ | z₁:ₖ</b>. Real-time systems live here.</p></div>
+<div class="card"><h3>Prediction</h3><p>Estimate a future state: <b>xₖ₊ₕ | z₁:ₖ</b>. Guidance and collision checking consume this.</p></div>
+<div class="card"><h3>Smoothing</h3><p>Estimate a past state using later data: <b>xₖ | z₁:T</b>. Better accuracy, but requires latency or offline processing.</p></div>
+</div>
+<div class="callout"><h3>Gaussian does not mean “the world is Gaussian.”</h3><p>It means the algorithm represents belief using a mean and covariance and often assumes Gaussian disturbances. Multimodal ambiguity, hard constraints, clutter, missed detections, and nonlinear geometry can violate that representation.</p></div>
+<button class="done" data-ch="bayes">Mark chapter complete</button>
+</section>
+
+<section class="section" id="kalman">
+<div class="section-head"><div class="chapter">CH 03</div><div><h2>The Kalman filter, without ritual</h2><p>For linear dynamics and observations with Gaussian, white, correctly modeled noise, the Kalman filter is the minimum mean-square-error estimator. The equations are a cycle of propagation, comparison, weighting, and correction.</p></div></div>
+<div class="tabs" role="tablist"><button class="tab active" data-pane="kf-predict">1 · Predict</button><button class="tab" data-pane="kf-innovate">2 · Innovate</button><button class="tab" data-pane="kf-gain">3 · Weight</button><button class="tab" data-pane="kf-update">4 · Correct</button></div>
+<div class="card">
+<div class="tabpane active" id="kf-predict"><span class="mini">Time update</span><h3>Move the estimate and covariance through the model</h3><div class="equation">x̂ₖ⁻ = Fₖx̂ₖ₋₁⁺ + Bₖuₖ<br>Pₖ⁻ = FₖPₖ₋₁⁺Fₖᵀ + Qₖ</div><p>The superscript minus means “before this measurement.” Q deliberately enlarges uncertainty for dynamics the model cannot predict.</p></div>
+<div class="tabpane" id="kf-innovate"><span class="mini">Residual in sensor space</span><h3>Ask how surprising the measurement is</h3><div class="equation">yₖ = zₖ − Hₖx̂ₖ⁻<br>Sₖ = HₖPₖ⁻Hₖᵀ + Rₖ</div><p>The innovation y is not meaningful without S. A 5-meter residual can be ordinary or catastrophic depending on predicted measurement uncertainty.</p></div>
+<div class="tabpane" id="kf-gain"><span class="mini">Optimal linear weighting</span><h3>Convert innovation into a state correction</h3><div class="equation">Kₖ = Pₖ⁻HₖᵀSₖ⁻¹</div><p>Large R usually lowers measurement influence. Large predicted uncertainty usually raises it. Avoid explicit matrix inversion in production; solve a linear system using a numerically stable factorization.</p></div>
+<div class="tabpane" id="kf-update"><span class="mini">Measurement update</span><h3>Correct the mean and reduce uncertainty</h3><div class="equation">x̂ₖ⁺ = x̂ₖ⁻ + Kₖyₖ<br>Pₖ⁺ = (I − KₖHₖ)Pₖ⁻(I − KₖHₖ)ᵀ + KₖRₖKₖᵀ</div><p>The second line is the Joseph form. It better preserves symmetry and positive semidefiniteness under finite-precision arithmetic.</p></div>
+</div>
+<h3 style="margin-top:40px">Choose the filter to match the representation</h3>
+<table><thead><tr><th>Method</th><th>Use when</th><th>Main limit</th></tr></thead><tbody>
+<tr><td>Linear KF</td><td>F and H are linear; uncertainty is adequately Gaussian</td><td>Cannot represent nonlinear mappings directly</td></tr>
+<tr><td>EKF</td><td>Models are mildly nonlinear and differentiable</td><td>Linearization can bias or diverge; Jacobians must be right</td></tr>
+<tr><td>UKF / sigma-point</td><td>Nonlinearity is stronger; derivatives are awkward</td><td>More evaluations and tuning; still unimodal</td></tr>
+<tr><td>Particle filter</td><td>Belief is nonlinear, non-Gaussian, or multimodal</td><td>Computational cost and sample degeneracy</td></tr>
+<tr><td>Information filter</td><td>Sparse systems or distributed fusion favor information form</td><td>Recovering covariance can be costly</td></tr>
+<tr><td>IMM</td><td>A target switches among motion models</td><td>Model-set design and transition probabilities matter</td></tr>
+</tbody></table>
+<div class="grid2">
+<div class="card pink"><h3>NIS: measurement consistency</h3><div class="equation">NIS = yᵀS⁻¹y</div><p>Over many samples, compare NIS with chi-square bounds for the measurement dimension. Persistently high: uncertainty may be too small, noise non-Gaussian, data misassociated, or the model wrong. Persistently low: uncertainty may be inflated.</p></div>
+<div class="card lime"><h3>NEES: state consistency</h3><div class="equation">NEES = (x − x̂)ᵀP⁻¹(x − x̂)</div><p>NEES requires ground truth, so it is usually a simulation or instrumented-test metric. A low RMSE filter can still be dangerously inconsistent if P claims unjustified certainty.</p></div>
+</div>
+<button class="done" data-ch="kalman">Mark chapter complete</button>
+</section>
+
+<section class="section" id="lab">
+<div class="section-head"><div class="chapter">LIVE LAB</div><div><h2>Make the filter earn your trust</h2><p>A one-dimensional constant-velocity Kalman filter tracks a maneuvering target. Change reality and the filter’s assumptions independently. That mismatch is where the learning lives.</p></div></div>
+<div class="lab">
+<div class="labtop">
+<div class="controls">
+<h3 style="margin-top:0">Scenario controls</h3>
+<div class="scenario"><button data-scenario="balanced">Balanced</button><button data-scenario="overtrust">Over-trust sensor</button><button data-scenario="sluggish">Sluggish model</button></div>
+<div class="control"><label>Actual sensor σ <output id="sensorOut">6.0 m</output></label><input id="sensorNoise" type="range" min="1" max="20" value="6" step=".5"></div>
+<div class="control"><label>Filter assumes σ <output id="assumedOut">6.0 m</output></label><input id="assumedNoise" type="range" min="1" max="20" value="6" step=".5"></div>
+<div class="control"><label>Process noise q <output id="processOut">2.0</output></label><input id="processNoise" type="range" min=".1" max="12" value="2" step=".1"></div>
+<div class="control"><label>Maneuver strength <output id="maneuverOut">4.0</output></label><input id="maneuver" type="range" min="0" max="12" value="4" step=".5"></div>
+<button class="btn" id="rerun">Run new trial</button>
+<div class="legend"><span><i class="sw" style="background:#ffd43b"></i>truth</span><span><i class="sw" style="background:#ff86b7"></i>measurements</span><span><i class="sw" style="background:#3ed8e8"></i>estimate</span></div>
+</div>
+<div class="canvaswrap"><canvas id="filterCanvas" width="900" height="420" aria-label="Kalman filter tracking simulation"></canvas><p id="labReadout" class="plain"></p></div>
+</div>
+<div class="stats"><div class="stat"><b id="rmse">—</b><span>position RMSE</span></div><div class="stat"><b id="avgNis">—</b><span>mean NIS</span></div><div class="stat"><b id="coverage">—</b><span>±2σ coverage</span></div><div class="stat"><b id="verdict">—</b><span>consistency verdict</span></div></div>
+</div>
+</section>
+
+<section class="section" id="tracking">
+<div class="section-head"><div class="chapter">CH 04</div><div><h2>A tracker is more than a filter</h2><p>A filter updates one hypothesis. A multi-object tracker must decide which observations belong to which objects, when a track becomes credible, and when it should die.</p></div></div>
+<div class="pipeline"><div class="pipe">Detect<small>sensor returns</small></div><div class="pipe">Transform<small>time + frame</small></div><div class="pipe">Gate<small>reject impossible</small></div><div class="pipe">Associate<small>assign evidence</small></div><div class="pipe">Update<small>filter state</small></div><div class="pipe">Manage<small>birth / death</small></div></div>
+<div class="grid3">
+<div class="card yellow"><h3>Gating</h3><p>Use Mahalanobis distance in innovation space:</p><div class="equation">d² = yᵀS⁻¹y</div><p>A chi-square threshold sets a statistically interpretable gate. Rectangular distance thresholds ignore covariance geometry.</p></div>
+<div class="card cyan"><h3>Association</h3><p><b>NN:</b> closest valid hit.<br><b>GNN:</b> global one-to-one assignment.<br><b>JPDA:</b> weighted association probabilities.<br><b>MHT:</b> delays commitment by maintaining hypotheses.</p></div>
+<div class="card pink"><h3>Track management</h3><p>Tentative tracks require confirmation logic. Confirmed tracks coast through limited misses. Deletion balances false persistence against premature loss. Scores should use detection probability and clutter density where possible.</p></div>
+</div>
+<table class="failure"><thead><tr><th>Symptom</th><th>Likely mechanism</th><th>What to inspect</th></tr></thead><tbody>
+<tr><td>Track swap at crossing</td><td>Ambiguous association</td><td>Gate overlap, appearance features, JPDA/MHT, motion model</td></tr>
+<tr><td>Duplicate tracks</td><td>Unassigned detections repeatedly initiate</td><td>Assignment, initiation zones, duplicate suppression</td></tr>
+<tr><td>Track lags turns</td><td>Motion model too rigid / Q too small</td><td>Innovation autocorrelation, IMM, acceleration state</td></tr>
+<tr><td>Track jitters</td><td>Measurements overweighted</td><td>R calibration, timestamp jitter, sensor bias</td></tr>
+<tr><td>Ghost persists</td><td>Deletion/coasting too permissive</td><td>Miss score, P inflation, survival probability</td></tr>
+<tr><td>Good plot, bad prediction</td><td>Position is fit but velocity is wrong</td><td>Velocity RMSE, horizon-specific error, observability</td></tr>
+</tbody></table>
+<div class="plain"><strong>Track quality is multi-dimensional</strong>Accuracy, covariance consistency, continuity, purity, latency, false-track rate, ID switches, cardinality error, and prediction quality can move in different directions. One RMSE cannot certify a tracker.</div>
+<button class="done" data-ch="tracking">Mark chapter complete</button>
+</section>
+
+<section class="section" id="fusion">
+<div class="section-head"><div class="chapter">CH 05</div><div><h2>Fusion: combine information without counting it twice</h2><p>Fusion is easy only when errors are independent, timestamps align, frames match, biases are handled, and every covariance means what it claims. Real systems violate all five.</p></div></div>
+<div class="grid3">
+<div class="card yellow"><span class="mini">Centralized</span><h3>Detection-level fusion</h3><p>Send measurements to one tracker. It retains the most information and can model each sensor directly, but demands bandwidth, timing discipline, and central computation.</p></div>
+<div class="card cyan"><span class="mini">Decentralized</span><h3>Track-to-track fusion</h3><p>Local trackers send states and covariances. This reduces bandwidth and isolates subsystems, but cross-correlation can make naive fusion overconfident.</p></div>
+<div class="card pink"><span class="mini">Hybrid</span><h3>Selected raw + local tracks</h3><p>Useful when some sensors are tightly coupled and others arrive as vendor tracks. Interface contracts become part of the estimator design.</p></div>
+</div>
+<h3 style="margin-top:42px">Independent two-estimate fusion</h3>
+<div class="equation">Pᶠ = (P₁⁻¹ + P₂⁻¹)⁻¹<br>x̂ᶠ = Pᶠ(P₁⁻¹x̂₁ + P₂⁻¹x̂₂)</div>
+<div class="callout"><h3>The independence trap</h3><p>If two local tracks share process noise, prior information, map data, or earlier fused outputs, their errors are correlated. Applying the independent formula reuses common information and produces covariance that is too small. Use known cross-covariance, a decorrelation architecture, information bookkeeping, or conservative methods such as covariance intersection when correlation is unknown.</p></div>
+<table><thead><tr><th>Before fusing, verify</th><th>Failure if ignored</th></tr></thead><tbody>
+<tr><td>Timestamp and latency</td><td>Fusion of states from different physical times creates apparent bias</td></tr>
+<tr><td>Coordinate frame and origin</td><td>Consistent-looking numerical nonsense</td></tr>
+<tr><td>State definition and ordering</td><td>Velocity fused into acceleration; 2D/3D mismatch</td></tr>
+<tr><td>Covariance frame and units</td><td>Incorrect weighting and gates</td></tr>
+<tr><td>Bias and calibration state</td><td>More sensors reinforce the same systematic error</td></tr>
+<tr><td>Common information</td><td>Double counting and overconfidence</td></tr>
+</tbody></table>
+<button class="done" data-ch="fusion">Mark chapter complete</button>
+</section>
+
+<section class="section" id="gnc">
+<div class="section-head"><div class="chapter">CH 06</div><div><h2>Close the loop: Guidance, Navigation &amp; Control</h2><p>GNC is an information-and-action loop. The estimator’s latency, bias, uncertainty, and frame conventions directly shape control stability and mission performance.</p></div></div>
+<div class="grid3">
+<div class="card yellow"><span class="mini">Guidance</span><h3>Reference generation</h3><p>Path planning, trajectory optimization, intercept laws, waypoints, constraint handling. Output: a desired state or trajectory as a function of time.</p></div>
+<div class="card cyan"><span class="mini">Navigation</span><h3>State determination</h3><p>Sensor calibration, propagation, measurement update, fault detection, integrity. Output: state, covariance, time, frame, and health.</p></div>
+<div class="card pink"><span class="mini">Control</span><h3>Reference tracking</h3><p>Feedback and feedforward turn state error into actuator commands. Output: force, torque, steering, throttle, or motor commands.</p></div>
+</div>
+<h3 style="margin-top:42px">Control vocabulary you need in a design review</h3>
+<table><thead><tr><th>Concept</th><th>Meaning</th><th>Why the estimator cares</th></tr></thead><tbody>
+<tr><td>Stability</td><td>Whether disturbances decay or grow</td><td>Delay, bias, and noise can erode margins or excite the loop</td></tr>
+<tr><td>Controllability</td><td>Whether inputs can move the system through required states</td><td>No estimator can overcome missing actuator authority</td></tr>
+<tr><td>Observability</td><td>Whether measurements reveal the internal state</td><td>Unobservable modes drift regardless of controller quality</td></tr>
+<tr><td>Bandwidth</td><td>How quickly a loop can respond</td><td>Estimation rate and latency must support it</td></tr>
+<tr><td>Saturation</td><td>Physical actuator command limit</td><td>Causes nonlinear behavior and possible integrator windup</td></tr>
+<tr><td>Robustness</td><td>Tolerance to uncertainty and model error</td><td>Covariance alone does not cover unknown bias or bad models</td></tr>
+</tbody></table>
+<div class="grid2">
+<div class="card"><h3>PID</h3><div class="equation">u = Kₚe + Kᵢ∫e dt + Kᴅ de/dt</div><p>Practical and interpretable. Derivative action amplifies measurement noise, so state estimates or filtered derivatives matter. Anti-windup matters under saturation.</p></div>
+<div class="card lime"><h3>LQR / state feedback</h3><div class="equation">u = −Kx̂<br>J = ∫(xᵀQcx + uᵀRcu)dt</div><p>Balances state error against control effort. With a Kalman estimator and linear assumptions, LQR + KF forms LQG, but robustness still needs analysis.</p></div>
+</div>
+<div class="plain"><strong>Latency is part of the plant</strong>A beautifully tuned estimator that is 150 ms late supplies a precise estimate of the wrong time. Propagate estimates to the control epoch, timestamp at acquisition, and measure end-to-end delay distributions.</div>
+<button class="done" data-ch="gnc">Mark chapter complete</button>
+</section>
+
+<section class="section" id="validation">
+<div class="section-head"><div class="chapter">CH 07</div><div><h2>What experts test before they trust</h2><p>A convincing demo is not validation. Build evidence across truth data, Monte Carlo trials, stress cases, numerical checks, interfaces, timing, and closed-loop behavior.</p></div></div>
+<div class="grid2">
+<div class="card yellow"><h3>Estimator health checks</h3>
+<div class="check"><i>✓</i><span>P remains symmetric and positive semidefinite</span></div><div class="check"><i>✓</i><span>Innovations are approximately zero mean and temporally white</span></div><div class="check"><i>✓</i><span>NIS/NEES distributions match statistical bounds over ensembles</span></div><div class="check"><i>✓</i><span>Bias, frame, units, time offset, and sign errors are injected deliberately</span></div><div class="check"><i>✓</i><span>Dropouts, outliers, saturation, clutter, and asynchronous updates are covered</span></div></div>
+<div class="card cyan"><h3>System-level checks</h3>
+<div class="check"><i>✓</i><span>Requirements define accuracy by axis, regime, percentile, and horizon</span></div><div class="check"><i>✓</i><span>Latency is measured acquisition-to-actuation, not just algorithm runtime</span></div><div class="check"><i>✓</i><span>Monte Carlo seeds and configurations are reproducible</span></div><div class="check"><i>✓</i><span>Hardware-in-the-loop covers quantization, scheduling, and interfaces</span></div><div class="check"><i>✓</i><span>Fault detection has measured false-alarm and missed-detection rates</span></div></div>
+</div>
+<h3 style="margin-top:42px">A disciplined tuning order</h3>
+<table><thead><tr><th>Step</th><th>Action</th><th>Evidence</th></tr></thead><tbody>
+<tr><td>1</td><td>Verify equations, units, frames, Jacobians, discretization, and timestamps</td><td>Unit tests and hand-checkable cases</td></tr>
+<tr><td>2</td><td>Calibrate sensor R from stationary and regime-specific data</td><td>Residual distributions and Allan/deviation analysis where relevant</td></tr>
+<tr><td>3</td><td>Derive Q from disturbance models or acceleration spectral density</td><td>Prediction error across horizons</td></tr>
+<tr><td>4</td><td>Check innovation mean, whiteness, NIS, and NEES</td><td>Ensemble statistics, not a single run</td></tr>
+<tr><td>5</td><td>Tune gates and track logic against clutter and missed detections</td><td>False tracks, continuity, ID switches, OSPA/GOSPA</td></tr>
+<tr><td>6</td><td>Validate closed-loop margins and mission outcomes</td><td>SIL, HIL, field tests, fault campaigns</td></tr>
+</tbody></table>
+<div class="callout"><h3>Debug in this order</h3><p><b>Time → frame → units → sign → model → noise.</b> Teams often tune Q and R around a timestamp or coordinate transform bug. That can make one dataset look better while making the estimator fundamentally wrong.</p></div>
+<button class="done" data-ch="validation">Mark chapter complete</button>
+</section>
+
+<section class="section" id="assessment">
+<div class="section-head"><div class="chapter">CHECKPOINT</div><div><h2>Can you reason like the reviewer?</h2><p>Choose the strongest answer. Explanations appear immediately.</p></div></div>
+<div class="quiz" id="quiz">
+<div class="q"><h3>1. Position RMSE is low, but NEES is consistently above the upper chi-square bound. What is the best conclusion?</h3><button class="option" data-correct="0">The filter is accurate, so it is valid.</button><button class="option" data-correct="1">The filter is overconfident or the error model is wrong.</button><button class="option" data-correct="0">The measurement rate is necessarily too low.</button><div class="explain">NEES normalizes actual error by reported covariance. High NEES means the estimator claims more certainty than its errors justify.</div></div>
+<div class="q"><h3>2. Two radar tracks use the same motion model and previously received the same fused track. Can you fuse them as independent?</h3><button class="option" data-correct="0">Yes, because they come from separate radars.</button><button class="option" data-correct="1">No; common information can correlate their errors.</button><button class="option" data-correct="0">Yes, if both covariances are positive definite.</button><div class="explain">Shared priors and earlier fused outputs create correlation. Ignoring it double counts information and shrinks covariance unjustifiably.</div></div>
+<div class="q"><h3>3. A constant-velocity filter lags every hard turn. What is the first model-level hypothesis?</h3><button class="option" data-correct="1">The assumed dynamics are too rigid or Q is too small.</button><button class="option" data-correct="0">R must always be decreased.</button><button class="option" data-correct="0">The covariance should be removed.</button><div class="explain">Maneuvers violate the model. More process uncertainty, an acceleration state, or an IMM may be appropriate after time/frame bugs are excluded.</div></div>
+<div class="q"><h3>4. Which quantity is correct for statistical gating of a measurement?</h3><button class="option" data-correct="0">Raw Euclidean distance only</button><button class="option" data-correct="1">Innovation Mahalanobis distance using S</button><button class="option" data-correct="0">State covariance trace only</button><div class="explain">The innovation and its covariance define distance in measurement space, accounting for direction-dependent uncertainty.</div></div>
+<div class="q"><h3>5. The estimator is accurate but 200 ms late. The controller oscillates. What matters?</h3><button class="option" data-correct="0">Only estimator RMSE</button><button class="option" data-correct="1">End-to-end phase delay and control-loop margins</button><button class="option" data-correct="0">Making P smaller</button><div class="explain">Delay changes closed-loop dynamics. A precise stale estimate can destabilize or degrade the controller.</div></div>
+<div class="q"><h3>6. Innovations have a strong repeating pattern around zero. What does that suggest?</h3><button class="option" data-correct="1">The model leaves predictable information unexplained.</button><button class="option" data-correct="0">The filter is ideal because the mean is zero.</button><button class="option" data-correct="0">Measurements are independent by definition.</button><div class="explain">Good innovations should be not only near zero mean but also approximately white. Autocorrelation signals model, timing, or bias structure the filter missed.</div></div>
+</div>
+<button class="done" data-ch="assessment">Mark assessment complete</button>
+</section>
+
+<section class="section" id="sources">
+<div class="section-head"><div class="chapter">REFERENCE DESK</div><div><h2>Continue with primary and canonical sources</h2><p>This field manual is a map, not the whole territory. These sources provide derivations, implementation detail, and deeper tracking architecture.</p></div></div>
+<div class="source-list">
+<a class="source" href="https://doi.org/10.1115/1.3662552" target="_blank" rel="noreferrer"><b>Kalman’s 1960 paper</b><span>A New Approach to Linear Filtering and Prediction Problems</span></a>
+<a class="source" href="https://www.cs.unc.edu/~welch/media/pdf/kalman_intro.pdf" target="_blank" rel="noreferrer"><b>Welch &amp; Bishop</b><span>An Introduction to the Kalman Filter, UNC Chapel Hill</span></a>
+<a class="source" href="https://www.mathworks.com/help/fusion/ug/introduction-to-estimation-filters.html" target="_blank" rel="noreferrer"><b>Estimation filters</b><span>MathWorks Sensor Fusion &amp; Tracking documentation</span></a>
+<a class="source" href="https://www.mathworks.com/help/fusion/ug/introduction-to-multiple-target-tracking.html" target="_blank" rel="noreferrer"><b>Multiple-target tracking</b><span>Assignment, track logic, filters, and metrics</span></a>
+<a class="source" href="https://www.mathworks.com/help/fusion/ug/introduction-to-track-to-track-fusion.html" target="_blank" rel="noreferrer"><b>Track-to-track fusion</b><span>Architectures, correlation, benefits, and challenges</span></a>
+<a class="source" href="https://nescacademy.nasa.gov/" target="_blank" rel="noreferrer"><b>NASA NESC Academy</b><span>Technical lectures including Guidance, Navigation &amp; Control</span></a>
+</div>
+</section>
+<footer><div><b>VECTORLOCK</b><br><span style="color:#9fb0ba">State Estimation &amp; GNC Field Manual</span></div><a class="top" href="#top">Back to top ↑</a></footer>
+</main>
+</div>
+<script>
+(function(){
+const chapterIds=["orientation","state","bayes","kalman","tracking","fusion","gnc","validation","assessment"];
+const saved=new Set(JSON.parse(localStorage.getItem("vectorlock-progress")||"[]"));
+function renderProgress(){document.querySelectorAll(".done").forEach(b=>{b.classList.toggle("completed",saved.has(b.dataset.ch));b.textContent=saved.has(b.dataset.ch)?"✓ Completed":"Mark chapter complete"});const count=saved.size;document.getElementById("doneCount").textContent=count;document.getElementById("progress").style.width=(count/8*100)+"%"}
+document.querySelectorAll(".done").forEach(b=>b.addEventListener("click",()=>{saved.has(b.dataset.ch)?saved.delete(b.dataset.ch):saved.add(b.dataset.ch);localStorage.setItem("vectorlock-progress",JSON.stringify([...saved]));renderProgress()}));renderProgress();
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{document.querySelectorAll(".tab,.tabpane").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.pane).classList.add("active")}));
+document.querySelectorAll(".q").forEach(q=>q.querySelectorAll(".option").forEach(o=>o.addEventListener("click",()=>{if(q.dataset.answered)return;q.dataset.answered="1";o.classList.add(o.dataset.correct==="1"?"good":"bad");if(o.dataset.correct!=="1")q.querySelector('[data-correct="1"]').classList.add("good");q.querySelector(".explain").style.display="block"})));
+const nav=[...document.querySelectorAll(".nav a")];const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){nav.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id))}}),{rootMargin:"-30% 0px -60% 0px"});document.querySelectorAll("section[id]").forEach(s=>obs.observe(s));
+
+const canvas=document.getElementById("filterCanvas"),ctx=canvas.getContext("2d");
+const inputs={sensor:document.getElementById("sensorNoise"),assumed:document.getElementById("assumedNoise"),process:document.getElementById("processNoise"),maneuver:document.getElementById("maneuver")};
+const outputs={sensor:document.getElementById("sensorOut"),assumed:document.getElementById("assumedOut"),process:document.getElementById("processOut"),maneuver:document.getElementById("maneuverOut")};
+let trialSeed=3;
+function rng(){trialSeed=(trialSeed*1664525+1013904223)>>>0;return trialSeed/4294967296}
+function normal(){let u=1-rng(),v=1-rng();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function sync(){outputs.sensor.value=(+inputs.sensor.value).toFixed(1)+" m";outputs.assumed.value=(+inputs.assumed.value).toFixed(1)+" m";outputs.process.value=(+inputs.process.value).toFixed(1);outputs.maneuver.value=(+inputs.maneuver.value).toFixed(1)}
+function run(){
+sync();trialSeed=(Date.now()+Math.floor(Math.random()*9999))>>>0;
+const n=90,dt=1,actualSig=+inputs.sensor.value,assumedSig=+inputs.assumed.value,q=+inputs.process.value,man=+inputs.maneuver.value;
+let pos=5,vel=1.8,x0=0,x1=0,P00=100,P01=0,P10=0,P11=25;const truth=[],meas=[],est=[],sig=[],nis=[];let sq=0,covered=0;
+for(let k=0;k<n;k++){
+let acc=0;if(k>28&&k<43)acc=man/10;if(k>61&&k<72)acc=-man/8;vel+=acc;pos+=vel;let z=pos+normal()*actualSig;
+let xp0=x0+x1*dt,xp1=x1;let Q00=q*dt*dt*dt/3,Q01=q*dt*dt/2,Q11=q*dt;
+let PP00=P00+P01+P10+P11+Q00,PP01=P01+P11+Q01,PP10=P10+P11+Q01,PP11=P11+Q11;
+let y=z-xp0,S=PP00+assumedSig*assumedSig,K0=PP00/S,K1=PP10/S;x0=xp0+K0*y;x1=xp1+K1*y;
+P00=(1-K0)*PP00;P01=(1-K0)*PP01;P10=PP10-K1*PP00;P11=PP11-K1*PP01;
+truth.push(pos);meas.push(z);est.push(x0);sig.push(2*Math.sqrt(Math.max(P00,0)));nis.push(y*y/S);sq+=(x0-pos)*(x0-pos);if(Math.abs(x0-pos)<=sig[sig.length-1])covered++;
+}
+draw(truth,meas,est,sig);let rmse=Math.sqrt(sq/n),meanNis=nis.reduce((a,b)=>a+b,0)/n,cov=covered/n*100;
+document.getElementById("rmse").textContent=rmse.toFixed(1)+" m";document.getElementById("avgNis").textContent=meanNis.toFixed(2);document.getElementById("coverage").textContent=cov.toFixed(0)+"%";
+let verdict="credible",msg="The filter’s uncertainty is broadly compatible with its errors.";if(meanNis>2.2||cov<80){verdict="overconfident";msg="The filter is surprised too often or its ±2σ band misses truth too much. Inspect R, Q, maneuvers, timing, and outliers."}else if(meanNis<.35||cov>99){verdict="conservative";msg="The filter reports more uncertainty than observed errors justify. It may be safe-looking but gives away performance."}
+document.getElementById("verdict").textContent=verdict;document.getElementById("labReadout").innerHTML="<strong>Reviewer readout</strong>"+msg;
+}
+function draw(t,m,e,s){
+const dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);const all=t.concat(m),min=Math.min(...all)-10,max=Math.max(...all)+10;const X=i=>36+i/(t.length-1)*(w-55),Y=v=>h-28-(v-min)/(max-min)*(h-48);
+ctx.strokeStyle="rgba(255,255,255,.10)";ctx.lineWidth=1;for(let i=0;i<6;i++){let y=20+i*(h-48)/5;ctx.beginPath();ctx.moveTo(35,y);ctx.lineTo(w-18,y);ctx.stroke()}
+ctx.fillStyle="rgba(62,216,232,.14)";ctx.beginPath();e.forEach((v,i)=>{let y=Y(v+s[i]);i?ctx.lineTo(X(i),y):ctx.moveTo(X(i),y)});for(let i=e.length-1;i>=0;i--)ctx.lineTo(X(i),Y(e[i]-s[i]));ctx.closePath();ctx.fill();
+ctx.fillStyle="#ff86b7";m.forEach((v,i)=>{ctx.beginPath();ctx.arc(X(i),Y(v),2.3,0,Math.PI*2);ctx.fill()});
+function line(arr,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();arr.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));ctx.stroke()}line(t,"#ffd43b",2.5);line(e,"#3ed8e8",3);
+ctx.fillStyle="#9fb0ba";ctx.font="11px ui-monospace,monospace";ctx.fillText("TIME →",w-62,h-8);ctx.save();ctx.translate(11,53);ctx.rotate(-Math.PI/2);ctx.fillText("POSITION",0,0);ctx.restore();
+}
+Object.values(inputs).forEach(i=>i.addEventListener("input",run));document.getElementById("rerun").addEventListener("click",run);
+document.querySelectorAll("[data-scenario]").forEach(b=>b.addEventListener("click",()=>{const s=b.dataset.scenario;if(s==="balanced"){inputs.sensor.value=6;inputs.assumed.value=6;inputs.process.value=2;inputs.maneuver.value=4}if(s==="overtrust"){inputs.sensor.value=12;inputs.assumed.value=2;inputs.process.value=.3;inputs.maneuver.value=5}if(s==="sluggish"){inputs.sensor.value=4;inputs.assumed.value=10;inputs.process.value=.1;inputs.maneuver.value=11}run()}));window.addEventListener("resize",run);run();
+})();
+</script>
+</body>
+</html>
