@@ -32,7 +32,7 @@ footer{padding:50px clamp(26px,6vw,90px);background:var(--ink);color:white;displ
 <div>
 <div class="kicker">Field progress</div>
 <div class="progressbar"><span id="progress"></span></div>
-<div class="progresscopy"><span id="doneCount">0</span> of 8 chapters marked complete</div>
+<div class="progresscopy"><span id="doneCount">0</span> of 9 modules marked complete</div>
 </div>
 <nav class="nav">
 <a href="#orientation">00 Orientation</a><a href="#state">01 State</a><a href="#bayes">02 Bayesian estimation</a><a href="#kalman">03 Kalman filter</a><a href="#tracking">04 Object tracking</a><a href="#fusion">05 Track fusion</a><a href="#gnc">06 GNC</a><a href="#validation">07 Validation</a><a href="#lab">Live lab</a><a href="#assessment">Assessment</a>
@@ -261,7 +261,7 @@ footer{padding:50px clamp(26px,6vw,90px);background:var(--ink);color:white;displ
 (function(){
 const chapterIds=["orientation","state","bayes","kalman","tracking","fusion","gnc","validation","assessment"];
 const saved=new Set(JSON.parse(localStorage.getItem("vectorlock-progress")||"[]"));
-function renderProgress(){document.querySelectorAll(".done").forEach(b=>{b.classList.toggle("completed",saved.has(b.dataset.ch));b.textContent=saved.has(b.dataset.ch)?"✓ Completed":"Mark chapter complete"});const count=saved.size;document.getElementById("doneCount").textContent=count;document.getElementById("progress").style.width=(count/8*100)+"%"}
+function renderProgress(){document.querySelectorAll(".done").forEach(b=>{b.classList.toggle("completed",saved.has(b.dataset.ch));b.textContent=saved.has(b.dataset.ch)?"✓ Completed":"Mark chapter complete"});const count=saved.size;document.getElementById("doneCount").textContent=count;document.getElementById("progress").style.width=(count/chapterIds.length*100)+"%"}
 document.querySelectorAll(".done").forEach(b=>b.addEventListener("click",()=>{saved.has(b.dataset.ch)?saved.delete(b.dataset.ch):saved.add(b.dataset.ch);localStorage.setItem("vectorlock-progress",JSON.stringify([...saved]));renderProgress()}));renderProgress();
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{document.querySelectorAll(".tab,.tabpane").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.pane).classList.add("active")}));
 document.querySelectorAll(".q").forEach(q=>q.querySelectorAll(".option").forEach(o=>o.addEventListener("click",()=>{if(q.dataset.answered)return;q.dataset.answered="1";o.classList.add(o.dataset.correct==="1"?"good":"bad");if(o.dataset.correct!=="1")q.querySelector('[data-correct="1"]').classList.add("good");q.querySelector(".explain").style.display="block"})));
