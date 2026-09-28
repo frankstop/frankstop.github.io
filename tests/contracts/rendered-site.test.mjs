@@ -91,6 +91,55 @@ test("every public document has one canonical identity", async () => {
   }
 });
 
+test("major routes consistently identify Frank Valdez as a software developer", async () => {
+  const identityRoutes = [
+    "/",
+    "/about.html",
+    "/experience.html",
+    "/skills.html",
+    "/projects.html",
+    "/contact.html",
+    "/education.html",
+    "/gala-fresh.html",
+    "/games/",
+    "/games/signalrw/",
+    "/projects/shreddedflatabs/",
+    "/repositories/",
+    "/repositories/frankstop.github.io/",
+    "/resume/"
+  ];
+
+  for (const route of identityRoutes) {
+    const $ = load(await readFile(routeToFile(route), "utf8"));
+    const identityText = [
+      $("title").text(),
+      $('meta[name="description"]').attr("content"),
+      $('meta[name="author"]').attr("content"),
+      $("body").text()
+    ].filter(Boolean).join(" ");
+
+    assert.match(identityText, /software developer/i, `${route} software developer identity`);
+  }
+});
+
+test("rendered copy removes competing professional identities", async () => {
+  const htmlFiles = (await filesUnder(siteRoot)).filter((path) => path.endsWith(".html"));
+
+  for (const path of htmlFiles) {
+    const html = await readFile(path, "utf8");
+    assert.doesNotMatch(html, /technical operator and builder/i, path);
+    assert.doesNotMatch(html, /IT operations manager and software developer/i, path);
+    assert.doesNotMatch(html, /operational technical work/i, path);
+  }
+});
+
+test("person schema uses software developer as the sole job title", async () => {
+  const $ = load(await readFile(routeToFile("/"), "utf8"));
+  const schema = JSON.parse($('script[type="application/ld+json"]').first().text());
+
+  assert.equal(schema.jobTitle, "Software Developer");
+});
+
 test("every public document loads analytics exactly once", async () => {
   for (const route of [...smokeRoutes, "/404.html"]) {
     const $ = load(await readFile(routeToFile(route), "utf8"));

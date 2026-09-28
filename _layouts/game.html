@@ -4,19 +4,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ page.game_name }} | Frank Valdez Games</title>
-  <meta name="description" content="{% if game.description %}{{ game.description }}{% else %}Play {{ page.game_name }}, a browser game by Frank Valdez.{% endif %}">
+  <title>{{ page.game_name }} | Frank Valdez — Software Developer</title>
+  <meta name="description" content="{% if game.description %}{{ game.description }} Built by software developer Frank Valdez.{% else %}Play {{ page.game_name }}, a browser game by software developer Frank Valdez.{% endif %}">
+  <meta name="author" content="Frank Valdez, Software Developer">
   <meta name="robots" content="{% if page.game_published %}index, follow{% else %}noindex, follow{% endif %}">
   <link rel="canonical" href="https://frankiejvaldez.com/games/{{ page.game_slug }}/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Frank Valdez">
-  <meta property="og:title" content="{{ page.game_name }} | Frank Valdez Games">
-  <meta property="og:description" content="{% if game.description %}{{ game.description }}{% else %}Play {{ page.game_name }}, a browser game by Frank Valdez.{% endif %}">
+  <meta property="og:site_name" content="Frank Valdez — Software Developer">
+  <meta property="og:title" content="{{ page.game_name }} | Frank Valdez — Software Developer">
+  <meta property="og:description" content="{% if game.description %}{{ game.description }} Built by software developer Frank Valdez.{% else %}Play {{ page.game_name }}, a browser game by software developer Frank Valdez.{% endif %}">
   <meta property="og:url" content="https://frankiejvaldez.com/games/{{ page.game_slug }}/">
   {% if game.image %}<meta property="og:image" content="https://frankiejvaldez.com{{ game.image }}">{% endif %}
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{ page.game_name }} | Frank Valdez Games">
-  <meta name="twitter:description" content="{% if game.description %}{{ game.description }}{% else %}Play {{ page.game_name }}, a browser game by Frank Valdez.{% endif %}">
+  <meta name="twitter:title" content="{{ page.game_name }} | Frank Valdez — Software Developer">
+  <meta name="twitter:description" content="{% if game.description %}{{ game.description }} Built by software developer Frank Valdez.{% else %}Play {{ page.game_name }}, a browser game by software developer Frank Valdez.{% endif %}">
   {% if game.image %}<meta name="twitter:image" content="https://frankiejvaldez.com{{ game.image }}">{% endif %}
   <style>
     :root {
@@ -92,7 +93,7 @@
     <iframe
       class="game-frame"
       src="{{ page.game_url }}"
-      title="Play {{ page.game_name }}"
+      title="Play {{ page.game_name }}, built by Frank Valdez, software developer"
       allow="autoplay; fullscreen; gamepad"
       allowfullscreen
       referrerpolicy="strict-origin-when-cross-origin"
@@ -108,6 +109,7 @@
       <section class="route-status__card" aria-labelledby="game-title">
         <p>Game route reserved</p>
         <h1 id="game-title">{{ page.game_name }}</h1>
+        <p>Browser game by Frank Valdez, software developer.</p>
         <p>
           This address is ready. The game will appear here after its GitHub
           Pages site is published.

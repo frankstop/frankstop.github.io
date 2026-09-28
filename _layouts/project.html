@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ page.title | default: page.project_name }} | Frank Valdez Portfolio</title>
+  <title>{{ page.title | default: page.project_name }} | Frank Valdez — Software Developer</title>
   <meta name="description" content="{{ page.description | default: page.project_name }}">
+  <meta name="author" content="Frank Valdez, Software Developer">
   <meta name="robots" content="{% if page.project_published %}index, follow{% else %}noindex, follow{% endif %}">
   {% if page.canonical_path %}<link rel="canonical" href="https://frankiejvaldez.com{{ page.canonical_path }}">{% else %}<link rel="canonical" href="https://frankiejvaldez.com/projects/{{ page.project_slug }}/">{% endif %}
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Frank Valdez Portfolio">
-  <meta property="og:title" content="{{ page.title | default: page.project_name }} | Frank Valdez Portfolio">
+  <meta property="og:site_name" content="Frank Valdez — Software Developer">
+  <meta property="og:title" content="{{ page.title | default: page.project_name }} | Frank Valdez — Software Developer">
   <meta property="og:description" content="{{ page.description | default: page.project_name }}">
   <meta property="og:url" content="https://frankiejvaldez.com/projects/{{ page.project_slug }}/">
   {% if page.og_image %}
@@ -20,7 +21,7 @@
   {% else %}
   <meta name="twitter:card" content="summary">
   {% endif %}
-  <meta name="twitter:title" content="{{ page.title | default: page.project_name }} | Frank Valdez Portfolio">
+  <meta name="twitter:title" content="{{ page.title | default: page.project_name }} | Frank Valdez — Software Developer">
   <meta name="twitter:description" content="{{ page.description | default: page.project_name }}">
   <style>
     :root {
@@ -94,7 +95,7 @@
     <iframe
       class="project-frame"
       src="{{ page.project_url }}"
-      title="View {{ page.project_name }}"
+      title="View {{ page.project_name }}, built by Frank Valdez, software developer"
       allow="autoplay; fullscreen"
       allowfullscreen
       referrerpolicy="strict-origin-when-cross-origin"
@@ -110,6 +111,7 @@
       <section class="route-status__card" aria-labelledby="project-title">
         <p>Project route reserved</p>
         <h1 id="project-title">{{ page.project_name }}</h1>
+        <p>Software project by Frank Valdez, software developer.</p>
         <p>
           This address is ready. The project will appear here after its GitHub
           Pages site is published.

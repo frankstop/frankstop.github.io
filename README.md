@@ -1,6 +1,6 @@
 # Frank Valdez
 
-A multi-page experimental portfolio built from custom browser graphics, shared Jekyll components, and independently deployed GitHub projects.
+The personal portfolio of software developer Frank Valdez, built with custom browser graphics, shared Jekyll components, and independently deployed GitHub projects.
 
 **[Explore the live website](https://frankiejvaldez.com/)**
 

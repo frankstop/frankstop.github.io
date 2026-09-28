@@ -11,7 +11,7 @@
 {% include header.html %}
 <main id="directory-main" class="directory-main repository-page">
   <nav class="repository-breadcrumb" aria-label="Breadcrumb"><a href="{{ '/repositories/' | relative_url }}">Repository directory</a><span aria-hidden="true">/</span><a href="{{ '/repositories/categories/' | append: category.slug | append: '/' | relative_url }}">{{ repo.category | escape }}</a></nav>
-  <header class="directory-intro"><h1>{{ repo.name | escape }}</h1><p>{{ repo.description | escape }}</p></header>
+  <header class="directory-intro"><h1>{{ repo.name | escape }}</h1><p>{{ repo.description | escape }}</p><p>Software project by Frank Valdez, software developer.</p></header>
   <dl class="repository-facts"><div><dt>Source</dt><dd>{{ repo.visibility | capitalize }}</dd></div><div><dt>Website</dt><dd>{% if repo.website_status == 'live' %}Live{% elsif repo.website_status == 'unavailable' %}Unavailable{% else %}Not published{% endif %}</dd></div>{% if repo.language %}<div><dt>Primary language</dt><dd>{{ repo.language | escape }}</dd></div>{% endif %}<div><dt>Checked</dt><dd>{{ site.data.repositories.checked_at }}</dd></div></dl>
   {% if repo.retired %}<aside class="repository-notice"><h2>Retired project</h2><p>The README marks this project as retired on September 6, 2026. Maintenance and automated updates have ended; published data is historical.</p></aside>{% endif %}
   <section id="website" class="repository-destination">
