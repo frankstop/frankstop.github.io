@@ -1,0 +1,48 @@
+name: Crossword live device QA
+
+on:
+  workflow_run:
+    workflows: [Deploy GitHub Pages]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crossword-live-qa
+  cancel-in-progress: true
+
+jobs:
+  live-devices:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: CrosswordPuzzle/_source
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: CrosswordPuzzle/_source/package-lock.json
+      - run: npm ci
+      - name: Test calendar and generation contracts
+        run: npm test && npm run validate
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
+      - name: Test the published crossword on phones, tablets, and desktop
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/crossword-evidence
+        run: npm run test:e2e
+      - name: Save device screenshots
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: crossword-live-devices
+          path: ${{ runner.temp }}/crossword-evidence
+          if-no-files-found: ignore
+          retention-days: 7

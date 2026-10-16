@@ -13,3 +13,21 @@
 @media(pointer:coarse){.toolbar-button{min-height:36px}.clue{min-height:44px}.key{min-height:44px}.date-nav .icon-button{width:36px;height:36px}.icon-button:not(.circle){min-width:36px;min-height:36px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 @media print{.site-header nav,.intro,.date-nav button,.botanical,.toolbar,.progress-row,.virtual-keyboard,.site-footer,.tomorrow,.active-clue>div,.toast,.modal,.archive-banner,.completion-summary,.resume-button,.new-day-note{display:none!important}.app-shell{margin:0!important;padding:0!important;max-width:none}.theme-heading{padding:10px 0 20px}.puzzle-layout{display:grid!important;grid-template-columns:47% 50%!important;gap:3%!important}.clue-panel{padding-top:0}.clue{font-size:11px;padding:5px;line-height:1.35}.clue-column h3{font-size:13px}.cell-letter{font-size:16px}.cell-number{font-size:8px}.cell.in-word,.cell.selected{background:white!important}.crossword-grid,.block{print-color-adjust:exact;-webkit-print-color-adjust:exact}.theme-heading>p{font-size:14px}.theme-heading h2{font-size:30px}.clue-columns{gap:12px}.active-clue{display:none}body{background:white;color:black}}
+
+/* Phone play has priority over the desktop introduction. Keep the title in
+   the accessibility tree while moving the grid and keyboard into reach. */
+.virtual-keyboard.keyboard-hidden{display:none!important}
+@media(pointer:coarse){.keyboard-toggle{display:flex}.shortcut-link{display:none}}
+@media(max-width:700px){
+ .intro{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;margin:0}
+ .site-header{height:62px}
+ .theme-heading{padding:10px 0 14px}
+ .theme-heading>p{display:none}
+ .theme-heading h2{font-size:30px;margin:0 0 5px}
+ .date-nav{margin-bottom:9px}
+ .botanical{width:85px;height:65px;top:-17px}
+ .active-clue{position:sticky;top:0;z-index:8;min-height:53px}
+ .archive input,.share-text{font-size:16px}
+ .theme-title-wrap{max-width:calc(100% - 76px)}
+}
+@media(max-width:360px){.site-header nav>button:first-child{display:none}.theme-heading h2{font-size:27px}}
