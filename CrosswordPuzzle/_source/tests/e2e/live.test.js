@@ -7,7 +7,7 @@ import {generatePuzzle} from '../../src/lib/generator.js';
 const URL='https://frankiejvaldez.com/CrosswordPuzzle/?date=2026-10-15';
 async function open(browserType,viewport){
  const browser=await browserType.launch();
- const context=await browser.newContext({viewport,hasTouch:viewport.width<1100,isMobile:viewport.width<700});
+ const context=await browser.newContext({viewport,hasTouch:viewport.width<1200,isMobile:viewport.width<700});
  const page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const response=await page.goto(URL,{waitUntil:'networkidle'});assert.equal(response.status(),200);
