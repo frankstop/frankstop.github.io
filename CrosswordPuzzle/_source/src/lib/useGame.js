@@ -3,7 +3,7 @@ import {loadGame,saveGame} from './storage.js';
 export function useGame(puzzle,notify,onComplete){
  const [game,setGame]=useState(()=>loadGame(puzzle));
  const [paused,setPaused]=useState(false),[pencil,setPencil]=useState(false),[errors,setErrors]=useState({});
- const gridRef=useRef(null),gameRef=useRef(game),completionFired=useRef(game.completed),storageWarned=useRef(false);
+ const gridRef=useRef(null),gameRef=useRef(game),completionFired=useRef(game.completed),fullNotified=useRef(false),storageWarned=useRef(false);
  gameRef.current=game;
  const entriesById=useMemo(()=>new Map(puzzle.entries.map(w=>[w.id,w])),[puzzle]);
  const selected=puzzle.cells[game.selected]??puzzle.cells[puzzle.entries[0].cells[0]];
@@ -24,10 +24,16 @@ export function useGame(puzzle,notify,onComplete){
   return()=>{document.removeEventListener('visibilitychange',hide);window.removeEventListener('pagehide',unload);save(gameRef.current);};
  },[save]);
  useEffect(()=>{
-  if(completionFired.current||!puzzle.cells.every(c=>!c.letter||game.letters[c.index]===c.letter))return;
+  if(completionFired.current)return;
+  const full=puzzle.cells.every(c=>!c.letter||game.letters[c.index]);
+  if(!full){fullNotified.current=false;return;}
+  if(!puzzle.cells.every(c=>!c.letter||game.letters[c.index]===c.letter)){
+   if(!fullNotified.current)notify('Every square is filled. A few letters need another look.');
+   fullNotified.current=true;return;
+  }
   completionFired.current=true;
   setGame(g=>({...g,completed:true,completedAt:new Date().toISOString(),pencil:{}}));onComplete();
- },[game.letters,puzzle,onComplete]);
+ },[game.letters,puzzle,onComplete,notify]);
  const selectEntry=useCallback(w=>{
   const g=gameRef.current,index=w.cells.find(i=>!g.letters[i])??w.cells[0];
   setGame(g=>({...g,selected:index,direction:w.direction}));focusGrid(index);

@@ -61,10 +61,13 @@ test('a full manual solve completes, persists, and records an unassisted result'
   const puzzle=generatePuzzle('2026-10-15');
   // Visit each white square exactly once. Completing the last one opens the
   // result dialog, so no later test action is blocked behind that dialog.
-  for(const cell of puzzle.cells.filter(c=>c.letter)){
+  const white=puzzle.cells.filter(c=>c.letter),last=white.at(-1);
+  for(const cell of white){
    await page.locator(`[data-cell="${cell.index}"]`).click();
-   await page.locator(`[data-cell="${cell.index}"]`).press(cell.letter);
+   await page.locator(`[data-cell="${cell.index}"]`).press(cell===last?(cell.letter==='Z'?'X':'Z'):cell.letter);
   }
+  assert.match(await page.getByRole('status').innerText(),/A few letters need another look/);
+  await page.locator(`[data-cell="${last.index}"]`).press(last.letter);
   await page.getByRole('dialog',{name:'Beautifully done.'}).waitFor();
   assert.ok(await page.getByText('Solved without help',{exact:true}).isVisible());
   await page.getByRole('button',{name:'Close dialog'}).click();
