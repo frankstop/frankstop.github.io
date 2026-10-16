@@ -30,6 +30,7 @@ for(const [name,type,viewport] of [
   const metrics=await page.evaluate(()=>({viewport:innerWidth,width:document.documentElement.scrollWidth,grid:document.querySelector('.crossword-grid').getBoundingClientRect().toJSON()}));
   assert.ok(metrics.width<=metrics.viewport,`Horizontal overflow: ${metrics.width}/${metrics.viewport}`);
   assert.ok(metrics.grid.width<=metrics.viewport);
+  if(viewport.width<700)assert.ok(await page.locator('.brand strong').evaluate(el=>el.getBoundingClientRect().height)<32,'Phone wordmark must stay on one line');
   if(viewport.width<1200)assert.ok(await page.getByRole('region',{name:'On-screen keyboard'}).isVisible());
   const first=generatePuzzle('2026-10-15').entries[0],index=first.cells[0];
   await page.locator(`[data-clue="${first.id}"]`).click();
@@ -39,6 +40,9 @@ for(const [name,type,viewport] of [
   await page.reload({waitUntil:'networkidle'});
   await page.locator('.crossword-grid').waitFor();
   assert.equal(await page.locator(`[data-cell="${index}"] .cell-letter`).innerText(),first.answer[0]);
+  await page.locator(`[data-cell="${index}"]`).press('Escape');
+  assert.ok(await page.locator('.toolbar-button').first().evaluate(el=>el===document.activeElement),'Escape must leave the grid');
+  if(viewport.width<1200){await page.getByRole('button',{name:'Hide keyboard',exact:true}).click();assert.equal(await page.getByRole('region',{name:'On-screen keyboard'}).isVisible(),false);await page.getByRole('button',{name:'Keyboard',exact:true}).click();}
   await page.getByRole('button',{name:'Pause puzzle',exact:true}).click();
   assert.ok(await page.getByRole('button',{name:'Resume puzzle',exact:true}).last().isVisible());
   await page.getByRole('button',{name:'Resume puzzle',exact:true}).last().click();

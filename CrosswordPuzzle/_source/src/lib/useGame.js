@@ -76,7 +76,7 @@ export function useGame(puzzle,notify,onComplete){
  function onKeyDown(e){
   if(e.ctrlKey||e.metaKey||e.altKey)return;
   if(e.key==='Tab'){e.preventDefault();nextEntry(e.shiftKey?-1:1);return;}
-  if(e.key==='Escape')return;
+  if(e.key==='Escape'){e.preventDefault();gridRef.current?.closest('.play-panel')?.querySelector('.toolbar-button')?.focus();return;}
   if(e.key===' '||e.key.startsWith('Arrow')||['Enter','Home','End','Backspace','Delete'].includes(e.key)||/^[a-zA-Z]$/.test(e.key)){e.preventDefault();key(e.key);}
  }
  function check(scope){
