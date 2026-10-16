@@ -1,0 +1,13 @@
+import React,{useState,useRef,useEffect} from 'react';
+import Icon from './Icon';
+import {formatTime} from '../lib/storage';
+function Menu({name,icon,children,open,setOpen}){
+ const ref=useRef(null),isOpen=open===name;
+ useEffect(()=>{if(!isOpen)return;const close=e=>{if(!ref.current?.contains(e.target))setOpen(null);};const esc=e=>{if(e.key==='Escape'){setOpen(null);ref.current?.querySelector('button')?.focus();}};document.addEventListener('pointerdown',close);document.addEventListener('keydown',esc);return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('keydown',esc);};},[isOpen,setOpen]);
+ return <div ref={ref} className="toolbar-menu"><button className="toolbar-button" aria-expanded={isOpen} aria-haspopup="true" onClick={()=>setOpen(isOpen?null:name)}>{name}<Icon name={icon||'down'} size={14}/></button>{isOpen&&<div className="dropdown" onClick={()=>setOpen(null)}>{children}</div>}</div>;
+}
+export default function Toolbar({player,onModal,onShare}){
+ const [open,setOpen]=useState(null);
+ const {game,paused,togglePause,check,reveal}=player;
+ return <div className="toolbar"><button className="timer-button" aria-label={game.completed?'Completed':paused?'Resume puzzle':game.started?'Pause puzzle':'Start timer'} onClick={togglePause} disabled={game.completed}><Icon name={paused||!game.started?'play':'pause'} size={16}/><span className="timer">{formatTime(game.seconds)}</span></button><div className="toolbar-actions"><Menu name="Check" open={open} setOpen={setOpen}>{[['letter','Letter'],['word','Word'],['puzzle','Puzzle']].map(([scope,label])=><button key={scope} disabled={paused||game.completed} onClick={()=>check(scope)}>{label}<span>Check {scope==='puzzle'?'all filled squares':`this ${scope}`}</span></button>)}</Menu><Menu name="Reveal" open={open} setOpen={setOpen}>{[['letter','Letter'],['word','Word'],['puzzle','Puzzle']].map(([scope,label])=><button key={scope} disabled={paused||game.completed} onClick={()=>scope==='puzzle'?onModal('reveal'):reveal(scope)}>{label}<span>{scope==='puzzle'?'Show the full solution':`Uncover this ${scope}`}</span></button>)}</Menu><Menu name="More" icon="more" open={open} setOpen={setOpen}><button onClick={()=>{player.setPencil(v=>!v);}}>Pencil mode <span>{player.pencil?'On':'Off'} · tentative letters</span></button><button onClick={()=>onModal('stats')}>Your statistics</button><button onClick={onShare}>Share this puzzle</button><button onClick={()=>onModal('help')}>How to play</button><button onClick={()=>window.print()}>Print puzzle</button><button className="danger-text" onClick={()=>onModal('restart')}>Start over</button></Menu></div></div>;
+}

@@ -1,0 +1,6 @@
+import {generatePuzzle,validatePuzzle} from '../src/lib/generator.js';
+import {THEMES} from '../src/data/themes.js';
+const years=process.argv.slice(2).map(Number);if(!years.length)years.push(2026,2027,2028,2029);
+const signatures=new Set(),previous=new Map(),sizes={},start=performance.now();let count=0;
+for(const year of years){for(const theme of THEMES){const date=`${year}-${theme.key}`;if(theme.key==='02-29'&&new Date(`${date}T12:00Z`).getUTCMonth()!==1)continue;const p=generatePuzzle(date);const errors=validatePuzzle(p);if(errors.length)throw new Error(`${date}: ${errors}`);const exact=JSON.stringify(p.entries.map(w=>[w.answer,w.row,w.col,w.direction]));if(signatures.has(exact))throw new Error(`Repeated puzzle: ${date}`);signatures.add(exact);if(p.entries.length!==12)throw new Error(`Incomplete: ${date}`);for(const focus of theme.focus)if(!p.entries.some(w=>w.answer===focus))throw new Error(`Missing theme word: ${date}`);const answers=p.entries.map(w=>w.answer).sort().join('|');if(previous.get(theme.key)===answers)throw new Error(`Repeated annual answers: ${date}`);previous.set(theme.key,answers);sizes[p.size]=(sizes[p.size]||0)+1;count++;}console.log(`Validated every date in ${year}`);}
+console.log(JSON.stringify({puzzles:count,uniqueGrids:signatures.size,sizes,seconds:Math.round((performance.now()-start)/100)/10},null,2));

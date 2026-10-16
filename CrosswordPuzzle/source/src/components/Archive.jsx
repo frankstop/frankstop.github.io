@@ -1,0 +1,23 @@
+import React,{useState} from 'react';
+import {THEMES,themeForDate} from '../data/themes';
+import {FIRST_DATE,formatDate,monthDates,parseDate} from '../lib/calendar';
+import {allResults} from '../lib/storage';
+import Icon from './Icon';
+const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+export default function Archive({date,today,onChoose,calendarOnly=false}){
+ const initial=parseDate(date),[month,setMonth]=useState(initial.getUTCMonth()+1),[year,setYear]=useState(initial.getUTCFullYear()),[tab,setTab]=useState(calendarOnly?'themes':'archive'),[search,setSearch]=useState('');
+ const days=monthDates(year,month),offset=parseDate(days[0]).getUTCDay(),results=new Map(allResults().map(g=>[g.date,g]));
+ const years=Array.from({length:Number(today.slice(0,4))-2026+1},(_,i)=>2026+i);
+ function shift(delta){let m=month+delta,y=year;if(m===0){m=12;y--;}if(m===13){m=1;y++;}setMonth(m);setYear(y);}
+ return <div className="archive"><div className="segmented"><button className={tab==='archive'?'active':''} onClick={()=>setTab('archive')}>Play the archive</button><button className={tab==='themes'?'active':''} onClick={()=>setTab('themes')}>366 themes</button></div>
+  <p className="muted">{tab==='archive'?'There’s always another little world to explore. Pick a past puzzle.':'A theme for every date. The themes return each year; the puzzles are newly built.'}</p>
+  {tab==='archive'?<><div className="calendar-heading"><button className="icon-button" aria-label="Previous month" disabled={days[0]<=FIRST_DATE} onClick={()=>shift(-1)}><Icon name="left"/></button><div><select aria-label="Archive month" value={month} onChange={e=>setMonth(Number(e.target.value))}>{months.map((m,i)=><option key={m} value={i+1} disabled={`${year}-${String(i+1).padStart(2,'0')}-01`>today}>{m}</option>)}</select><select aria-label="Archive year" value={year} onChange={e=>{const y=Number(e.target.value);setYear(y);if(y===Number(today.slice(0,4))&&month>Number(today.slice(5,7)))setMonth(Number(today.slice(5,7)));}}>{years.map(y=><option key={y}>{y}</option>)}</select></div><button className="icon-button" aria-label="Next month" disabled={days.at(-1)>=today} onClick={()=>shift(1)}><Icon name="right"/></button></div>
+  <div className="calendar-grid"><div className="weekdays">{['S','M','T','W','T','F','S'].map((d,i)=><span key={i}>{d}</span>)}</div><div className="calendar-days">{Array.from({length:offset},(_,i)=><span key={`blank-${i}`}/>)}{days.map(key=>{
+   const done=results.get(key)?.completed,started=Object.keys(results.get(key)?.letters??{}).length>0;
+   return <button key={key} disabled={key>today||key<FIRST_DATE} className={`${key===date?'selected-day':''} ${done?'completed-day':''} ${key===today?'today-day':''}`} title={`${themeForDate(key).title}${done?' · completed':started?' · in progress':''}`} aria-label={`${formatDate(key)}: ${themeForDate(key).title}${done?', completed':started?', in progress':''}`} onClick={()=>onChoose(key)}><span>{Number(key.slice(8))}</span>{done?<Icon name="check" size={12}/>:started?<span className="calendar-dot"/>:<span className="day-dot"/>}</button>;
+  })}</div></div><div className="calendar-legend"><span><i className="legend-circle"/> Today</span><span><Icon name="check" size={13}/> Completed</span><span><i className="calendar-dot"/> In progress</span></div><button className="primary-button full-width" onClick={()=>onChoose(today)}>Play today’s crossword <Icon name="right"/></button></>:<><label className="search-label" htmlFor="theme-search">Find a theme</label><input id="theme-search" placeholder="Try woods, music, or space…" value={search} onChange={e=>setSearch(e.target.value)}/><div className="theme-list">{THEMES.filter(t=>`${t.title} ${t.category}`.toLowerCase().includes(search.toLowerCase())).map(t=>{
+   const current=`${today.slice(0,4)}-${t.key}`,valid=parseDate(current),available=valid&&current<=today&&current>=FIRST_DATE;
+   return <button className="theme-row" key={t.id} disabled={!available} onClick={()=>onChoose(current)}><span className="theme-date">{formatDate(`2000-${t.key}`,{month:'short',day:'numeric'})}</span><span><strong>{t.title}</strong><small>{t.category}</small></span><span className="theme-status">{available?<Icon name="right" size={15}/>:t.key==='02-29'?'Leap day':'Coming up'}</span></button>;
+  })}{!THEMES.some(t=>`${t.title} ${t.category}`.toLowerCase().includes(search.toLowerCase()))&&<p className="empty-state">No matching themes. Try a broader subject.</p>}</div><p className="fine-print">Future themes are visible. Their puzzles unlock on the day, at midnight in New York.</p></>}
+ </div>;
+}
