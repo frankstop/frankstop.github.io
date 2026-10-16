@@ -40,4 +40,4 @@ Production browser tests use the published GitHub Pages URL, with desktop, phone
 
 ## Deployment
 
-The portfolio's existing Pages workflow publishes committed static files. The `CrosswordPuzzle/source/` directory retains this source and its lockfile beside the deployable build. To update, build from that source and replace only the app's emitted files. Do not replace the portfolio root or its domain configuration.
+The portfolio's existing Pages workflow publishes committed static files. The `CrosswordPuzzle/_source/` directory retains this source and its lockfile beside the deployable build. To update, build from that source and replace only the app's emitted files. Do not replace the portfolio root or its domain configuration.
