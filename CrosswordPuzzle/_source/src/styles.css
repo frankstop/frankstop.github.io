@@ -32,3 +32,7 @@
 }
 @media(max-width:360px){.site-header nav>button:first-child{display:none}.theme-heading h2{font-size:27px}}
 @media(max-width:700px){.brand{gap:8px}.brand-mark{width:27px;height:27px;flex-shrink:0}.brand strong{font-size:20px;white-space:nowrap;letter-spacing:-.5px}.site-header nav{gap:12px}}
+/* Calendar dates keep their own layouts as titles and grid sizes change. */
+.theme-heading{overflow:hidden}
+.cell-letter{font-size:calc(100cqw / var(--size) * .58);padding-top:calc(100cqw / var(--size) * .14)}
+.cell-number{font-size:clamp(6px,calc(100cqw / var(--size) * .26),10px)}

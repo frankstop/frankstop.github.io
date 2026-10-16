@@ -36,7 +36,7 @@ The running puzzle stays in place at midnight; Today takes the reader to the new
 
 `npm test` checks calendar completeness, curated vocabulary, deterministic construction, leap dates, New York midnight, annual answer changes, and corrupt-grid detection. `npm run validate` constructs and independently validates every date across 2026–2029 (1,461 puzzles), rejects exact duplicate grids, checks all focus words, and reports grid sizes. Pass additional years to `node scripts/validate-calendar.js 2030 2031` to expand the sweep.
 
-Production browser tests use the published GitHub Pages URL, with desktop, phone, and tablet viewports in Chromium and WebKit. `tests/e2e/live.test.js` uses real pointer and keyboard events to test saved progress, pause/resume, archive/theme search, responsive overflow, and a complete unassisted solve. The Crossword live device QA workflow runs these after a successful Pages deployment and retains screenshots for seven days.
+Production browser tests use the published GitHub Pages URL, with desktop, phone, and tablet viewports in Chromium and WebKit. `tests/e2e/live.test.js` uses real pointer and keyboard events to test saved progress, pause/resume, archive/theme search, responsive overflow, and a complete unassisted solve. Year-boundary tests simulate New York midnight across December 31/January 1 while retaining the old game; they also exercise the archive year selector, February 29 in leap and ordinary years, long theme titles, and a 17×17 future grid on phone and tablet layouts. The Crossword live device QA workflow runs these after a successful Pages deployment and retains screenshots for seven days.
 
 ## Deployment
 

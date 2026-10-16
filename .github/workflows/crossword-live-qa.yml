@@ -31,7 +31,7 @@ jobs:
           cache-dependency-path: CrosswordPuzzle/_source/package-lock.json
       - run: npm ci
       - name: Test calendar and generation contracts
-        run: npm test && npm run validate
+        run: npm test && node scripts/validate-calendar.js 2026 2027 2028 2029 2030 2031 2032 2033 2034 2035
       - name: Install Chromium and WebKit
         run: npx playwright install --with-deps chromium webkit
       - name: Test the published crossword on phones, tablets, and desktop
